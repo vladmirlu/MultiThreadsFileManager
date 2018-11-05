@@ -9,10 +9,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class WorkerThread extends Thread {
 
-    private PipedInputStream pi;
-    private PipedOutputStream po;
-
-    private boolean suspendFlag;
+    private final PipedInputStream pi;
+    private final PipedOutputStream po;
 
     public WorkerThread(String name, PipedInputStream pi, PipedOutputStream po) {
         this.setName(name);
@@ -24,7 +22,6 @@ public class WorkerThread extends Thread {
     public void run() {
 
              try {
-
                      System.out.println("Thread Worker started");
 
                      StringBuilder builder = new StringBuilder();
@@ -33,18 +30,9 @@ public class WorkerThread extends Thread {
                      for (int i = 0; i < len; i++) {
                          builder.append(data[i]);
                      }
-//            System.out.println(builder.toString());
                      String hash = getMD5hash(builder.toString());
                      po.write(hash.getBytes());
-                     // pi.close();
                      System.out.println("Worker Thread generates the MD5 hash: " + hash);
-
-                    /* Thread.sleep(100);
-                     synchronized (this){
-                         notify();
-                     }
-             } catch (InterruptedException e) {
-                 e.printStackTrace();*/
 
              } catch (IOException e) {
                  e.printStackTrace();
@@ -67,13 +55,5 @@ public class WorkerThread extends Thread {
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void goSuspend() {
-        suspendFlag = true;
-    }
-    public synchronized void goResume() {
-        suspendFlag = false;
-        notify();
     }
 }

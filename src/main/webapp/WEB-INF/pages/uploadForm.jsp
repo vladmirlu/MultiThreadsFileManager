@@ -2,12 +2,12 @@
 <html>
 <head>
 <script type="text/javascript" src="jquery-1.2.6.min.js"></script>
-<title>Spring Mvc Test Application</title>
+<title>Multi threads file manager</title>
 </head>
 <body>
 
 	<center>
-		<h2>Spring Mvc Test Application</h2>
+		<h2>Multi threads file manager</h2>
 		<h3>Please select a file to upload !</h3>
 		<br />
 		<form:form method="post" enctype="multipart/form-data"

@@ -7,9 +7,9 @@ import java.io.*;
 
 public class SomeThread extends Thread {
     private MultipartFile file;
-    private String fileName;
-    private PipedInputStream pi;
-    private PipedOutputStream po;
+    private final String fileName;
+    private final PipedInputStream pi;
+    private final PipedOutputStream po;
 
     private boolean suspendFlag;
 

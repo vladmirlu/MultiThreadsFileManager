@@ -41,39 +41,31 @@ public class FileManageService {
 
 
     private void threadsMain(MultipartFile file, String fileName){
-        PipedOutputStream po = new PipedOutputStream();
-        PipedInputStream pi = new PipedInputStream(); // or new PipedInputStream(po);
-
         try {
-            pi.connect(po);
+            PipedOutputStream po = new PipedOutputStream();
+            PipedInputStream pi = new PipedInputStream(po);
 
-            /*ExecutorService service = Executors.newCachedThreadPool();
-            for(int i = 0; i < 6; i++) {
-                service.submit(new Runnable() {
-                    public void run() {
-                        SomeThread provider1 = new SomeThread("provider1" , file, fileName, pi, po );
-                        provider1.start();
-                        WorkerThread worker = new WorkerThread("Worker", pi, po );
-                        worker.start();
+            ExecutorService service = Executors.newCachedThreadPool();
+            for (int i = 0; i < 7; i++) {
+
+                service.submit(() -> {
+                    try {
+                    SomeThread provider = new SomeThread(Thread.currentThread().getName(), file, fileName, pi, po);
+                    provider.goSuspend();
+                    provider.start();
+                    Thread.sleep(100);
+                    WorkerThread worker = new WorkerThread("Worker", pi, po);
+                    worker.start();
+                    Thread.sleep(200);
+                    provider.goResume();
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
-            }*/
+            }
 
-            SomeThread provider1 = new SomeThread("provider1" , file, fileName, pi, po );
-            WorkerThread worker = new WorkerThread("Worker", pi, po);
-
-            provider1.goSuspend();
-            provider1.start();
-            Thread.sleep(100);
-            worker.start();
-            Thread.sleep(200);
-            provider1.goResume();
-
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
