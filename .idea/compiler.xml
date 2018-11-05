@@ -7,10 +7,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="FileManageTestApp" />
+        <module name="filesplitter" />
+        <module name="statistics" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FileManageTestApp" target="1.8" />
+      <module name="filesplitter" target="1.8" />
+      <module name="fileworker" target="1.5" />
+      <module name="statistics" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
