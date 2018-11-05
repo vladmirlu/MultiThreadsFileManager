@@ -1,19 +1,45 @@
 package com.multithreads.files_manager.management.splitter.validator;
 
-import com.multithreads.files_manager.management.splitter.InvalidCommandException;
+import com.multithreads.files_manager.management.exception.InvalidCommandException;
+import com.multithreads.files_manager.management.splitter.SizeUnits;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Split command validation tool.
  */
-public interface SplitCommandValidator extends CommandValidator {
+public class SplitCommandValidator {
 
+    private Logger logger;
+
+    public SplitCommandValidator(final Logger logger) {
+        this.logger = logger;
+    }
+
+
+    public void checkCommandValidity(final String[] command) throws InvalidCommandException{
+        checkCommandSignature(command);
+        checkFileExistence(command);
+        checkEmptyFile(command);
+        checkCorrectPartSize(command);
+    }
     /**
      * Checks if command signature is valid.
      *
      * @param command splitted command
      * @throws InvalidCommandException in case of command invalidity
      */
-    void checkCommandSignature(final String[] command) throws InvalidCommandException;
+
+    public void checkCommandSignature(final String[] command) throws InvalidCommandException {
+        logger.debug("Checking command signature.\nUser command: " + Arrays.toString(command));
+        if (command.length != 5 || !command[1].equals("-p") || !command[3].equals("-s")) {
+            throw new InvalidCommandException("Invalid command signature.");
+        }
+    }
 
     /**
      * Checks if the file exists.
@@ -21,7 +47,14 @@ public interface SplitCommandValidator extends CommandValidator {
      * @param command splitted command
      * @throws InvalidCommandException in case of command invalidity
      */
-    void checkFileExistence(final String[] command) throws InvalidCommandException;
+
+    public void checkFileExistence(final String[] command) throws InvalidCommandException {
+        logger.debug("Checking file existence.\nUser command: " + Arrays.toString(command));
+        File file = new File(command[2]);
+        if (!file.exists()) {
+            throw new InvalidCommandException("Specified file doesn't exists.");
+        }
+    }
 
     /**
      * Checks if the file is empty.
@@ -29,7 +62,14 @@ public interface SplitCommandValidator extends CommandValidator {
      * @param command splitted command
      * @throws InvalidCommandException in case of command invalidity
      */
-    void checkEmptyFile(final String[] command) throws InvalidCommandException;
+
+    public void checkEmptyFile(final String[] command) throws InvalidCommandException {
+        logger.debug("Checking if file is empty.\nUser command: " + Arrays.toString(command));
+        File file = new File(command[2]);
+        if (file.length() == 0) {
+            throw new InvalidCommandException("Specified file is empty.");
+        }
+    }
 
     /**
      * Checks if the part size is correct.
@@ -37,7 +77,29 @@ public interface SplitCommandValidator extends CommandValidator {
      * @param command splitted command
      * @throws InvalidCommandException in case of command invalidity
      */
-    void checkCorrectPartSize(final String[] command) throws InvalidCommandException;
 
+    public void checkCorrectPartSize(final String[] command) throws InvalidCommandException {
+        logger.debug("Checking correct part size.\nUser command: " + Arrays.toString(command));
+        File fileToSplit = new File((command[2]));
+        String sizeStr = command[4];
+        boolean isCorrectUnit = false;
+        SizeUnits specifiedUnit = null;
+        for (SizeUnits sizeUnit : SizeUnits.values()) {
+            if (sizeStr.endsWith(String.valueOf(sizeUnit))) {
+                isCorrectUnit = true;
+                specifiedUnit = sizeUnit;
+            }
+        }
+        if (!isCorrectUnit) {
+            throw new InvalidCommandException("Incorrect part size unit.");
+        }
+
+        long partSize = Long.parseLong(sizeStr.substring(0, sizeStr.indexOf(String.valueOf(specifiedUnit))))
+                * specifiedUnit.getCoefficient();
+        long fileSize = fileToSplit.length();
+        if (partSize > fileSize || partSize <= 0) {
+            throw new InvalidCommandException("Incorrect part size.");
+        }
+    }
 
 }

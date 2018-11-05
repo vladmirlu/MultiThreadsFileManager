@@ -1,8 +1,10 @@
-package com.multithreads.files_manager.management.splitter;
+package com.multithreads.files_manager.management.command;
 
+import com.multithreads.files_manager.management.exception.InvalidCommandException;
+import com.multithreads.files_manager.management.splitter.Transfer;
 import com.multithreads.files_manager.management.splitter.parser.SplitParamParser;
 import com.multithreads.files_manager.management.splitter.provider.PropertiesProvider;
-import com.multithreads.files_manager.management.splitter.validator.CommandValidator;
+import com.multithreads.files_manager.management.splitter.validator.SplitCommandValidator;
 import com.multithreads.files_manager.statistics.ProgressPrinter;
 import com.multithreads.files_manager.statistics.TaskTracker;
 import org.apache.commons.io.FilenameUtils;
@@ -22,7 +24,7 @@ import java.util.concurrent.Future;
 /**
  * Split command.
  */
-public class SplitCommand implements FileCommand {
+public class SplitCommand  {
 
     /**
      * Root logger.
@@ -57,12 +59,12 @@ public class SplitCommand implements FileCommand {
     /**
      * Command validation tool.
      */
-    private CommandValidator splitCommandValidator;
+    private SplitCommandValidator splitCommandValidator;
 
     public SplitCommand(final Logger logger, final SplitParamParser splitParamParser,
                         final PropertiesProvider propertiesProvider, final ExecutorService fileWorkersPool,
                         final ExecutorService statisticsPool, final TaskTracker taskTracker,
-                        final CommandValidator splitCommandValidator) {
+                        final SplitCommandValidator splitCommandValidator) {
         this.logger = logger;
         this.splitParamParser = splitParamParser;
         this.propertiesProvider = propertiesProvider;
@@ -75,29 +77,29 @@ public class SplitCommand implements FileCommand {
     /**
      * Splits file.
      *
-     * @param args command arguments
+     * @param strings command arguments
      * @return list of files
      * @throws ExecutionException      if the computation threw an exception
      * @throws InterruptedException    in case of thread interrupting
      * @throws InvalidCommandException in case of command invalidity
      * @throws IOException             if an I/O error occurs
      */
-    @Override
-    public List<File> execute(final String[] args)
-            throws IOException, InvalidCommandException, ExecutionException, InterruptedException {
-        splitCommandValidator.checkCommandValidity(args);
-        String userCommandStr = "\nUser command: " + Arrays.toString(args);
-        File file = new File(splitParamParser.parsePath(args));
-        long partSize = splitParamParser.parseSize(args);
+
+    public List<File> execute(final String[] strings) throws IOException, ExecutionException, InterruptedException,
+            InvalidCommandException {
+
+        splitCommandValidator.checkCommandValidity(strings);
+        String userCommandStr = "\nUser command: " + Arrays.toString(strings);
+        File file = new File(splitParamParser.parsePath(strings));
+        long partSize = splitParamParser.parseSize(strings);
         long fileSize = file.length();
         long numSplits = fileSize / partSize;
         long remainingBytes = fileSize % partSize;
         taskTracker.setTotalTasks(fileSize);
-        logger.debug("Source file size: " + fileSize + " bytes, Number of splits: " + numSplits
-                             + "Remaining bytes:" + remainingBytes + userCommandStr);
+
         List<Future<?>> futures = new ArrayList<>();
         List<File> files = new ArrayList<>();
-        logger.info("Splitting. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
+
         Files.createDirectory(Paths.get(file.getParent() + "/parts"));
         for (long i = 0; i < numSplits; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "."
@@ -117,8 +119,8 @@ public class SplitCommand implements FileCommand {
             futures.add(f);
             files.add(partFile);
         }
-        logger.info("Executing src.main.com.multithreads.files_manager.statistics. Submitting ProgressPrinter object to the statisticsPool." + userCommandStr);
-        Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(args)));
+
+        Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(strings)));
         futures.add(f);
         for (Future<?> future : futures) {
             future.get();
@@ -127,7 +129,7 @@ public class SplitCommand implements FileCommand {
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
-        logger.debug("Statistics reset." + userCommandStr);
+
 
         return files;
     }

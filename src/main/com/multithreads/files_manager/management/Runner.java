@@ -1,14 +1,12 @@
 package com.multithreads.files_manager.management;
 
-import com.multithreads.files_manager.management.command.CommandExecutor;
-import com.multithreads.files_manager.management.command.CommandExecutorImpl;
+import com.multithreads.files_manager.management.command.*;
 import com.multithreads.files_manager.management.splitter.*;
 import com.multithreads.files_manager.management.splitter.parser.MergeParamParser;
 import com.multithreads.files_manager.management.splitter.parser.SplitParamParser;
 import com.multithreads.files_manager.management.splitter.provider.PropertiesProvider;
-import com.multithreads.files_manager.management.splitter.validator.CommandValidator;
-import com.multithreads.files_manager.management.splitter.validator.MergeCommandValidatorImpl;
-import com.multithreads.files_manager.management.splitter.validator.SplitCommandValidatorImpl;
+import com.multithreads.files_manager.management.splitter.validator.MergeCommandValidator;
+import com.multithreads.files_manager.management.splitter.validator.SplitCommandValidator;
 import com.multithreads.files_manager.statistics.TaskTracker;
 import org.apache.log4j.Logger;
 
@@ -66,29 +64,29 @@ public class Runner {
      * Interacts with user.
      */
     public void run() {
-        FileAssistant fileAssistant = new FileAssistantImpl();
+        FileAssistant fileAssistant = new FileAssistant();
         SplitParamParser splitParamParser = new SplitParamParser(logger);
         MergeParamParser mergeParamParser = new MergeParamParser(logger);
-        CommandValidator splitCommandValidator = new SplitCommandValidatorImpl(logger);
-        CommandValidator mergeCommandValidator = new MergeCommandValidatorImpl(logger);
-        FileCommand splitCommand = new SplitCommand(logger, splitParamParser, propertiesProvider, fileWorkersPool,
+        SplitCommandValidator splitCommandValidator = new SplitCommandValidator(logger);
+        MergeCommandValidator mergeCommandValidator = new MergeCommandValidator(logger);
+        SplitCommand splitCommand = new SplitCommand(logger, splitParamParser, propertiesProvider, fileWorkersPool,
                                                      statisticsPool, taskTracker, splitCommandValidator);
-        FileCommand mergeCommand = new MergeCommand(logger, fileAssistant, mergeParamParser, propertiesProvider,
+        MergeCommand mergeCommand = new MergeCommand(logger, fileAssistant, mergeParamParser, propertiesProvider,
                                                      fileWorkersPool, statisticsPool, taskTracker,
                                                      mergeCommandValidator);
-        CommandExecutor commandExecutor = new CommandExecutorImpl(logger, splitCommand, mergeCommand);
+        CommandExecutor commandExecutor = new CommandExecutor(logger, splitCommand, mergeCommand);
         Scanner scanner = new Scanner(System.in);
         String clientInput = "";
         while (!clientInput.equals("exit")) {
-            logger.info("Waiting for user input.");
+
             System.out.println("Enter the command:");
             clientInput = scanner.nextLine();
-            logger.debug("User input: " + clientInput);
+
             if (!clientInput.equals("exit")) {
                 try {
                     commandExecutor.execute(clientInput);
                 } catch (Exception ex) {
-                    errorLogger.error("Bad command: " + clientInput, ex);
+
                     System.out.println("Bad command.");
                 }
             }

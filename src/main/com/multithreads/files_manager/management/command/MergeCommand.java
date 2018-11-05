@@ -1,8 +1,11 @@
-package com.multithreads.files_manager.management.splitter;
+package com.multithreads.files_manager.management.command;
 
+import com.multithreads.files_manager.management.exception.InvalidCommandException;
+import com.multithreads.files_manager.management.splitter.FileAssistant;
+import com.multithreads.files_manager.management.splitter.Transfer;
 import com.multithreads.files_manager.management.splitter.parser.MergeParamParser;
 import com.multithreads.files_manager.management.splitter.provider.PropertiesProvider;
-import com.multithreads.files_manager.management.splitter.validator.CommandValidator;
+import com.multithreads.files_manager.management.splitter.validator.MergeCommandValidator;
 import com.multithreads.files_manager.statistics.ProgressPrinter;
 import com.multithreads.files_manager.statistics.TaskTracker;
 
@@ -22,7 +25,7 @@ import java.util.concurrent.Future;
 /**
  * Merge command.
  */
-public class MergeCommand implements FileCommand {
+public class MergeCommand {
 
     /**
      * Root logger.
@@ -62,13 +65,13 @@ public class MergeCommand implements FileCommand {
     /**
      * Command validation tool.
      */
-    private CommandValidator mergeCommandValidator;
+    private MergeCommandValidator mergeCommandValidator;
 
     public MergeCommand(final Logger logger, final FileAssistant fileAssistant,
                         final MergeParamParser mergeParamParser,
                         final PropertiesProvider propertiesProvider, final ExecutorService fileWorkersPool,
                         final ExecutorService statisticsPool, final TaskTracker taskTracker,
-                        final CommandValidator mergeCommandValidator) {
+                        final MergeCommandValidator mergeCommandValidator) {
         this.logger = logger;
         this.fileAssistant = fileAssistant;
         this.mergeParamParser = mergeParamParser;
@@ -86,12 +89,9 @@ public class MergeCommand implements FileCommand {
      * @return list with merged file
      * @throws ExecutionException      if the computation threw an exception
      * @throws InterruptedException    in case of thread interrupting
-     * @throws InvalidCommandException in case of command invalidity
      * @throws IOException             if an I/O error occurs
      */
-    @Override
-    public List<File> execute(final String[] args)
-            throws IOException, InvalidCommandException, ExecutionException, InterruptedException {
+    public List<File> execute(final String[] args) throws IOException, ExecutionException, InterruptedException, InvalidCommandException  {
         mergeCommandValidator.checkCommandValidity(args);
         String userCommandStr = "\nUser command: " + Arrays.toString(args);
         List<File> files = mergeParamParser.parseFiles(args);
@@ -100,14 +100,14 @@ public class MergeCommand implements FileCommand {
         String originalFilePath = files.get(0).getParent() + "/" + propertiesProvider.SOURCE_FILENAME + "."
                 + FilenameUtils.getExtension(files.get(0).getName());
         File originalFile = fileAssistant.createFile(originalFilePath, totalSize);
-        logger.debug("Created original file with path:" + originalFilePath + " and size:" + totalSize + userCommandStr);
+
 
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
-        logger.debug("Files have been sorted by name." + userCommandStr);
+
         long iterations = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 :
                 files.size();
         List<Future<?>> futures = new ArrayList<>();
-        logger.info("Merging. Submitting Transfer objects to the fileWorkersPool." + userCommandStr);
+
         for (int i = 0; i < iterations; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
             Future<?> f = fileWorkersPool.submit(
@@ -123,17 +123,17 @@ public class MergeCommand implements FileCommand {
                                  propertiesProvider, taskTracker, userCommandStr));
             futures.add(f);
         }
-        logger.info("Executing src.main.com.multithreads.files_manager.statistics. Submitting ProgressPrinter object to the statisticsPool." + userCommandStr);
+
         Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker, Arrays.toString(args)));
         futures.add(f);
         for (Future<?> future : futures) {
             future.get();
         }
-        logger.debug("Merging completed." + userCommandStr);
+
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
-        logger.debug("Statistics reset." + userCommandStr);
+
 
         List<File> originalFiles = new ArrayList<>();
         originalFiles.add(originalFile);

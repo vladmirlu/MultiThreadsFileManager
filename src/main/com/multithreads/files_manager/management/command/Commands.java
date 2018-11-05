@@ -5,24 +5,24 @@ package com.multithreads.files_manager.management.command;
  */
 public enum Commands {
 
-    SPLIT("split"),
-    MERGE("merge");
+    SPLIT("s"),
+    MERGE("m");
 
     /**
-     * Command name.
+     * Command symbol.
      */
-    private final String name;
+    private final String symbol;
 
     /**
-     * Initializes the name variable.
+     * Initializes the symbol variable.
      *
-     * @param name name of the command
+     * @param symbol symbol of the command
      */
-    Commands(String name) {
-        this.name = name;
+    Commands(String symbol) {
+        this.symbol = symbol;
     }
 
-    public final String getName() {
-        return this.name;
+    public final String getSymbol() {
+        return this.symbol;
     }
 }

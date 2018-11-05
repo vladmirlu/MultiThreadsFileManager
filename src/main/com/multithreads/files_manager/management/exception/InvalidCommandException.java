@@ -1,4 +1,4 @@
-package com.multithreads.files_manager.management.splitter;
+package com.multithreads.files_manager.management.exception;
 
 /**
  * Exception that is thrown in case of command invalidity.
