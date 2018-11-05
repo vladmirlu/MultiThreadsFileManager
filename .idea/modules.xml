@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FileManageTestApp.iml" filepath="$PROJECT_DIR$/FileManageTestApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/filesplitter/filesplitter.iml" filepath="$PROJECT_DIR$/filesplitter/filesplitter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/fileworker.iml" filepath="$PROJECT_DIR$/fileworker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/statistics/statistics.iml" filepath="$PROJECT_DIR$/statistics/statistics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Multi_threads_file_manager.iml" filepath="$PROJECT_DIR$/Multi_threads_file_manager.iml" />
     </modules>
   </component>
 </project>
