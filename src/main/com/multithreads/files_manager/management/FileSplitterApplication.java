@@ -13,16 +13,6 @@ public class FileSplitterApplication {
     private final static Logger logger = Logger.getRootLogger();
 
     /**
-     * Error logger.
-     */
-    private final static Logger errorLogger = Logger.getLogger("error-file");
-
-    /**
-     * Fatal logger.
-     */
-    private final static Logger fatalLogger = Logger.getLogger("fatal-file");
-
-    /**
      * Start point of the application.
      *
      * @param args arguments
@@ -30,11 +20,10 @@ public class FileSplitterApplication {
     public static void main(String[] args) {
         logger.info("Main method started.");
         try {
-            Runner runner = new Runner(logger, errorLogger);
-            logger.debug("Runner object was created.");
-            runner.run();
+            Communicator communicator = new Communicator(logger);
+            logger.debug("Communicator object was created.");
+            communicator.openConsole();
         } catch (Throwable tr) {
-            fatalLogger.fatal("Fatal error." + tr);
             System.out.println("Something went wrong.");
         }
     }

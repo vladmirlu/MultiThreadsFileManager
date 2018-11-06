@@ -24,20 +24,16 @@ public class ProgressPrinter extends Thread {
      */
     private TaskTracker taskTracker;
 
-    /**
-     * User command.
-     */
-    private String command;
 
     /**
      * Initializes taskTracker and command fields.
      *
      * @param taskTracker tool for interaction with the src.main.com.multithreads.files_manager.statistics module
-     * @param command     user command
+
      */
-    public ProgressPrinter(TaskTracker taskTracker, String command) {
+    public ProgressPrinter(TaskTracker taskTracker) {
         this.taskTracker = taskTracker;
-        this.command = command;
+
     }
 
     /**
@@ -78,7 +74,6 @@ public class ProgressPrinter extends Thread {
     public String toString() {
         return "ProgressPrinter{" +
                 "threadName='" + Thread.currentThread().getName() + '\'' +
-                ", command='" + command + '\'' +
                 '}';
     }
 }

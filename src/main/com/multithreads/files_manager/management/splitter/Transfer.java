@@ -54,10 +54,6 @@ public class Transfer extends Thread {
      */
     private TaskTracker taskTracker;
 
-    /**
-     * User command.
-     */
-    private String userCommand;
 
     /**
      * Initializes class fields.
@@ -69,10 +65,9 @@ public class Transfer extends Thread {
      * @param toFileOffset       pointer offset in the transfer destination file
      * @param propertiesProvider tool for providing file properties
      * @param taskTracker        tool for interaction with the src.main.com.multithreads.files_manager.statistics module
-     * @param userCommand        user command
      */
     public Transfer(File fromFile, long fromFileOffset, long length, File toFile, long toFileOffset,
-                    PropertiesProvider propertiesProvider, TaskTracker taskTracker, String userCommand) {
+                    PropertiesProvider propertiesProvider, TaskTracker taskTracker) {
         this.fromFile = fromFile;
         this.fromFileOffset = fromFileOffset;
         this.length = length;
@@ -80,7 +75,6 @@ public class Transfer extends Thread {
         this.toFileOffset = toFileOffset;
         this.propertiesProvider = propertiesProvider;
         this.taskTracker = taskTracker;
-        this.userCommand = userCommand;
     }
 
     /**
@@ -155,7 +149,6 @@ public class Transfer extends Thread {
                 ", length=" + length +
                 ", toFile=" + toFile +
                 ", toFileOffset=" + toFileOffset +
-                ", userCommand='" + userCommand + '\'' +
-                '}';
+                 '}';
     }
 }
