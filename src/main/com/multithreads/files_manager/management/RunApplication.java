@@ -14,17 +14,15 @@ public class RunApplication {
 
     /**
      * Start point of the application.
-     *
      * @param args arguments
      */
     public static void main(String[] args) {
         logger.info("Main method started.");
         try {
             Communicator communicator = new Communicator(logger);
-            logger.debug("Communicator object was created.");
             communicator.openConsole();
         } catch (Throwable tr) {
-            logger.debug("Runner object was created.");
+            logger.error("Error");
         }
     }
 }

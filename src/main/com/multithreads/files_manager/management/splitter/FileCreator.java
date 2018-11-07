@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * File assistant tool.
  */
-public class FileAssistant {
+public class FileCreator {
 
     /**
      * Creates file.

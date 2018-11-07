@@ -30,7 +30,8 @@ public class Communicator {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            switch (getCommand(scanner)) {
+            Command command = chooseCommand(scanner);
+            switch (command) {
                 case SPLIT:
                     FileSplitter fileSplitter = new FileSplitter(service);
                     System.out.println("Enter the files quantity you wont to split the file:");
@@ -49,7 +50,7 @@ public class Communicator {
         service.shutDownTreads();
     }
 
-    Command getCommand(Scanner scanner) throws InvalidCommandException {
+    Command chooseCommand(Scanner scanner) throws InvalidCommandException {
         System.out.println("To split file input " + Command.SPLIT.getSymbol()
                 + "\n" + "To merge file input " + Command.MERGE.getSymbol()
                 + "\n" + "To exit input " + Command.EXIT.getSymbol());

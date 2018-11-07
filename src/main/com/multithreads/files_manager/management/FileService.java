@@ -1,6 +1,6 @@
 package com.multithreads.files_manager.management;
 
-import com.multithreads.files_manager.management.splitter.FileAssistant;
+import com.multithreads.files_manager.management.splitter.FileCreator;
 import com.multithreads.files_manager.management.splitter.SizeUnits;
 import com.multithreads.files_manager.management.splitter.TaskTrackerImpl;
 import com.multithreads.files_manager.management.splitter.Transfer;
@@ -51,7 +51,7 @@ public class FileService {
     /**
      * File assistant tool.
      */
-    private final FileAssistant fileAssistant = new FileAssistant();
+    private final FileCreator fileCreator = new FileCreator();
 
     public static ResourceBundle rb = ResourceBundle.getBundle("application");
 
@@ -66,11 +66,11 @@ public class FileService {
     }
 
     public File getOriginalFile(List<File> files) throws IOException {
-        long totalSize = fileAssistant.calculateTotalSize(files);
+        long totalSize = fileCreator.calculateTotalSize(files);
         taskTracker.setTotalTasks(totalSize);
         String originalFilePath = files.get(0).getParent() + "/" + propertiesProvider.SOURCE_FILENAME + "."
                 + FilenameUtils.getExtension(files.get(0).getName());
-        return fileAssistant.createFile(originalFilePath, totalSize);
+        return fileCreator.createFile(originalFilePath, totalSize);
     }
 
     public List<File> parseFiles() throws FileNotFoundException{
@@ -110,7 +110,7 @@ public class FileService {
         statisticsPool.shutdown();
     }
 
-    public FileAssistant getFileAssistant() {
-        return fileAssistant;
+    public FileCreator getFileCreator() {
+        return fileCreator;
     }
 }

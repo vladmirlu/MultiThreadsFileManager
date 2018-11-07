@@ -47,7 +47,7 @@ public class FileMerger {
             futures.add(f);
         }
         if (iterations == files.size() - 1) {
-            long totalSize = fileService.getFileAssistant().calculateTotalSize(files);
+            long totalSize = fileService.getFileCreator().calculateTotalSize(files);
             Future<?> f = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile);
             futures.add(f);
         }
