@@ -1,6 +1,5 @@
 package com.multithreads.files_manager.management.file_workers;
 
-import com.multithreads.files_manager.management.constants.FileSizeUnit;
 import com.multithreads.files_manager.statistics.TaskTracker;
 import com.multithreads.files_manager.statistics.ProgressPrinter;
 import org.apache.commons.io.FilenameUtils;
@@ -29,16 +28,6 @@ public class FileService {
     private final  ExecutorService fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     /**
-     * Statistics thread pool.
-     */
-    private final ExecutorService statisticsPool = Executors.newFixedThreadPool(1);
-
-    /**
-     * Interface for interaction with the src.main.com.multithreads.files_manager.statistics module.
-     */
-    private final TaskTracker taskTracker = new TaskTracker();
-
-    /**
      * File assistant tool.
      */
     private final FileCreator fileCreator = new FileCreator();
@@ -57,12 +46,11 @@ public class FileService {
 
     public Future<?> getWorkerFuture(File file, long length,  long fromFileOffset, long toFileOffset,  File originalFile){
         return fileWorkersPool.submit(
-                new FileTransfer(file, fromFileOffset, length, originalFile, toFileOffset, taskTracker));
+                new FileTransfer(file, fromFileOffset, length, originalFile, toFileOffset));
     }
 
     public File getOriginalFile(List<File> files) throws IOException {
         long totalSize = fileCreator.calculateTotalSize(files);
-        taskTracker.setTotalTasks(totalSize);
         String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "."
                 + FilenameUtils.getExtension(files.get(0).getName());
         return fileCreator.createFile(originalFilePath, totalSize);
@@ -89,21 +77,8 @@ public class FileService {
         return size / 5;
     }
 
-    public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
-        Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker));
-        futures.add(f);
-        for (Future<?> future : futures) {
-            future.get();
-        }
-        taskTracker.setTotalTasks(0);
-        taskTracker.setCompletedTasks(0);
-        taskTracker.getReportsPerSection().clear();
-        shutDownTreads();
-    }
-
-    public void shutDownTreads(){
-        fileWorkersPool.shutdown();
-        statisticsPool.shutdown();
+    public ExecutorService getFileWorkersPool() {
+        return fileWorkersPool;
     }
 
     public FileCreator getFileCreator() {

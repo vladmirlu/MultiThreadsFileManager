@@ -1,5 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
+import com.multithreads.files_manager.statistics.StatisticsService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -18,10 +19,12 @@ import java.util.concurrent.Future;
 public class FileSplitter {
 
     private final FileService fileService;
+    private final StatisticsService statisticsService;
 
 
-    public FileSplitter(FileService fileService) {
+    public FileSplitter(FileService fileService, StatisticsService statisticsService) {
        this.fileService = fileService;
+       this.statisticsService = statisticsService;
     }
     /**
      * Splits file.
@@ -59,7 +62,8 @@ public class FileSplitter {
             files.add(partFile);
         }
 
-        fileService.setStatistic(futures);
+        statisticsService.setStatistic(futures);
+        fileService.getFileWorkersPool().shutdown();
         return files;
     }
 }

@@ -1,5 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
+import com.multithreads.files_manager.statistics.StatisticsService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -17,8 +18,11 @@ public class FileMerger {
 
     private final FileService fileService;
 
-    public FileMerger( FileService fileService) {
+    private final StatisticsService statisticsService;
+
+    public FileMerger( FileService fileService, StatisticsService statisticsService) {
         this.fileService = fileService;
+        this.statisticsService = statisticsService;
     }
 
     /**
@@ -50,7 +54,10 @@ public class FileMerger {
         }
         List<File> originalFiles = new ArrayList<>();
         originalFiles.add(originalFile);
-        fileService.setStatistic(futures);
+
+        fileService.getFileWorkersPool().shutdown();
+        statisticsService.setStatistic(futures);
+
         return originalFiles;
     }
 }

@@ -46,7 +46,7 @@ public class FileTransfer extends Thread {
     /**
      * Tool for interaction with the src.main.com.multithreads.files_manager.statistics module.
      */
-    private TaskTracker taskTracker;
+    private TaskTracker taskTracker = new TaskTracker();
 
 
     /**
@@ -59,13 +59,12 @@ public class FileTransfer extends Thread {
      * @param toFileOffset   pointer offset in the transfer destination file
      * @param taskTracker    tool for interaction with the src.main.com.multithreads.files_manager.statistics module
      */
-    public FileTransfer(File fromFile, long fromFileOffset, long length, File toFile, long toFileOffset, TaskTracker taskTracker) {
+    public FileTransfer(File fromFile, long fromFileOffset, long length, File toFile, long toFileOffset) {
         this.fromFile = fromFile;
         this.fromFileOffset = fromFileOffset;
         this.length = length;
         this.toFile = toFile;
         this.toFileOffset = toFileOffset;
-        this.taskTracker = taskTracker;
     }
 
     /**
