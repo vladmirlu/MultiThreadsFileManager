@@ -26,22 +26,20 @@ public class FileSplitter {
     public FileSplitter(FileService fileService) {
        this.fileService = fileService;
     }
-
     /**
      * Splits file.
      *
      * @return list of files
      * @throws ExecutionException      if the computation threw an exception
      * @throws InterruptedException    in case of thread interrupting
-     * @throws InvalidCommandException in case of command invalidity
      * @throws IOException             if an I/O error occurs
      */
 
     public List<File> execute(String splitSize) throws IOException, ExecutionException, InterruptedException {
 
-        File file = new File("/home/user7/Documents/temp/temp.txt");
+        File file = new File(FileService.rb.getString("filePath"));
 
-        long partSize = parseSize(splitSize);
+        long partSize = fileService.parseSize(splitSize);
         long fileSize = file.length();
         long numSplits = fileSize / partSize;
         long remainingBytes = fileSize % partSize;
@@ -57,7 +55,6 @@ public class FileSplitter {
             files.add(partFile);
         }
         if (remainingBytes > 0) {
-
             File partFile = new File(file.getParent() + "/parts/" + (numSplits) + "." + FilenameUtils.getExtension(file.getName()));
             Future<?> f = fileService.getWorkerFuture(file, remainingBytes,fileSize - remainingBytes,0, partFile);
             futures.add(f);
@@ -66,18 +63,5 @@ public class FileSplitter {
 
         fileService.setStatistic(futures);
         return files;
-    }
-
-    public long parseSize(String sizeStr) {
-
-        long size = Long.parseLong(sizeStr);
-        for (SizeUnits sizeUnit : SizeUnits.values()) {
-            if (sizeStr.endsWith(String.valueOf(sizeUnit))) {
-                size = Long.parseLong(sizeStr.substring(0, sizeStr.indexOf(String.valueOf(sizeUnit))))
-                        * sizeUnit.getCoefficient();
-            }
-        }
-
-        return size;
     }
 }

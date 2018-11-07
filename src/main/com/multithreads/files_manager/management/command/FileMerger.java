@@ -27,15 +27,14 @@ public class FileMerger {
     /**
      * Merges files.
      *
-     * @param args command arguments
      * @return list with merged file
      * @throws ExecutionException      if the computation threw an exception
      * @throws InterruptedException    in case of thread interrupting
      * @throws IOException             if an I/O error occurs
      */
-    public List<File> execute(final String[] args) throws IOException, ExecutionException, InterruptedException {
+    public List<File> execute() throws IOException, ExecutionException, InterruptedException {
 
-        List<File> files = fileService.parseFiles(args);
+        List<File> files = fileService.parseFiles();
         File originalFile = fileService.getOriginalFile(files);
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 

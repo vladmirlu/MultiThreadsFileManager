@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 /**
  * Main class of the application.
  */
-public class FileSplitterApplication {
+public class RunApplication {
 
     /**
      * Root logger.
@@ -24,7 +24,7 @@ public class FileSplitterApplication {
             logger.debug("Communicator object was created.");
             communicator.openConsole();
         } catch (Throwable tr) {
-            System.out.println("Something went wrong.");
+            logger.debug("Runner object was created.");
         }
     }
 }

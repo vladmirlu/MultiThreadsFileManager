@@ -1,6 +1,8 @@
 package com.multithreads.files_manager.management;
 
 import com.multithreads.files_manager.management.splitter.FileAssistant;
+import com.multithreads.files_manager.management.splitter.SizeUnits;
+import com.multithreads.files_manager.management.splitter.TaskTrackerImpl;
 import com.multithreads.files_manager.management.splitter.Transfer;
 import com.multithreads.files_manager.management.splitter.provider.PropertiesProvider;
 import com.multithreads.files_manager.statistics.ProgressPrinter;
@@ -9,9 +11,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,39 +26,36 @@ public class FileService {
     /**
      * Root logger.
      */
-    private Logger logger;
+    private final Logger logger;
 
     /**
      * File workers thread pool.
      */
-    private  ExecutorService fileWorkersPool;
+    private final  ExecutorService fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     /**
      * Statistics thread pool.
      */
-    private ExecutorService statisticsPool;
+    private final ExecutorService statisticsPool = Executors.newFixedThreadPool(1);
 
     /**
      * Tool for providing file properties.
      */
-    private final PropertiesProvider propertiesProvider;
+    private final PropertiesProvider propertiesProvider = new PropertiesProvider();
 
     /**
      * Interface for interaction with the src.main.com.multithreads.files_manager.statistics module.
      */
-    private TaskTracker taskTracker;
+    private final TaskTracker taskTracker = new TaskTrackerImpl();
 
     /**
      * File assistant tool.
      */
-    private FileAssistant fileAssistant;
+    private final FileAssistant fileAssistant = new FileAssistant();
 
-    public FileService(PropertiesProvider propertiesProvider, TaskTracker taskTracker, Logger logger){
-        this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        this.statisticsPool  =  Executors.newFixedThreadPool(1);
-        this.propertiesProvider = propertiesProvider;
-        this.fileAssistant  = new FileAssistant();
-        this.taskTracker = taskTracker;
+    public static ResourceBundle rb = ResourceBundle.getBundle("application");
+
+    public FileService(Logger logger){
         this.logger = logger;
     }
 
@@ -72,13 +73,25 @@ public class FileService {
         return fileAssistant.createFile(originalFilePath, totalSize);
     }
 
-    public List<File> parseFiles(final String[] args) {
-        logger.debug("Parsing files in the directory path. User command: " + Arrays.toString(args));
-        String pathDirectory = args[2];
-        File directory = new File(pathDirectory);
+    public List<File> parseFiles() throws FileNotFoundException{
+        logger.debug("Parsing files in the directory path");
+        File directory = new File(rb.getString("splitFileDidectory"));
         File[] files = directory.listFiles();
-
+        if(files != null)
         return Arrays.asList(files);
+        throw new FileNotFoundException();
+    }
+
+    public long parseSize(String sizeStr) {
+
+        long size = Long.parseLong(sizeStr);
+        for (SizeUnits sizeUnit : SizeUnits.values()) {
+            if (sizeStr.endsWith(String.valueOf(sizeUnit))) {
+                size = Long.parseLong(sizeStr.substring(0, sizeStr.indexOf(String.valueOf(sizeUnit))))
+                        * sizeUnit.getCoefficient();
+            }
+        }
+        return size;
     }
 
     public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
@@ -87,10 +100,14 @@ public class FileService {
         for (Future<?> future : futures) {
             future.get();
         }
-
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
+    }
+
+    public void shutDownTreads(){
+        fileWorkersPool.shutdown();
+        statisticsPool.shutdown();
     }
 
     public FileAssistant getFileAssistant() {

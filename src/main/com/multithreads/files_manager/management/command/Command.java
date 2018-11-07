@@ -17,7 +17,6 @@ public enum Command {
 
     /**
      * Initializes the symbol variable.
-     *
      * @param symbol symbol of the command
      */
     Command(String symbol) {
