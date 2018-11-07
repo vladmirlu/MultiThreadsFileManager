@@ -1,7 +1,7 @@
 package com.multithreads.files_manager.management.file_workers;
 
-import com.multithreads.files_manager.statistics.TaskTracker;
-import com.multithreads.files_manager.statistics.ProgressPrinter;
+import com.multithreads.files_manager.management.model.FileData;
+import com.multithreads.files_manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -44,9 +43,9 @@ public class FileService {
         }
     }
 
-    public Future<?> getWorkerFuture(File file, long length,  long fromFileOffset, long toFileOffset,  File originalFile){
-        return fileWorkersPool.submit(
-                new FileTransfer(file, fromFileOffset, length, originalFile, toFileOffset));
+    public Future<?> getWorkerFuture(File file, long length,  long fromFileOffset, long toFileOffset,  File originalFile,  StatisticService statService){
+        FileData fileData = new FileData(file, originalFile, fromFileOffset, toFileOffset, length);
+        return fileWorkersPool.submit(new FileTransfer(fileData, statService));
     }
 
     public File getOriginalFile(List<File> files) throws IOException {

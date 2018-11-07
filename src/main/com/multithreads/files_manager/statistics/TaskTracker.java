@@ -11,17 +11,13 @@ public class TaskTracker {
     /**
      * Report about completed and total tasks.
      */
-    private TaskReport taskReport = new TaskReport(0, 0);
+    private TaskReport taskReport = new TaskReport(0, 0, 0, 0);
 
     /**
      * Map of section and corresponding task report.
      */
     private Map<String, TaskReport> reportsPerSection = new HashMap<>();
 
-    /**
-     * Represents buffer and time to read and write it.
-     */
-    private BufferTime bufferTime = new BufferTime(0, 0);
 
     /**
      * Adds completed tasks.
@@ -96,7 +92,7 @@ public class TaskTracker {
      * @param buffer buffer of tasks
      */
     public synchronized void setBufferTasks(final long buffer) {
-        bufferTime.setBuffer(buffer);
+        taskReport.setBuffer(buffer);
     }
 
     /**
@@ -106,7 +102,7 @@ public class TaskTracker {
      */
 
     public synchronized void setBufferTimeNanoSec(final long time) {
-        bufferTime.setTimeNanoSec(time);
+        taskReport.setTimeNanoSec(time);
     }
 
     /**
@@ -116,7 +112,7 @@ public class TaskTracker {
      */
 
     public synchronized long getBufferTasks() {
-        return bufferTime.getBuffer();
+        return taskReport.getBuffer();
     }
 
     /**
@@ -126,7 +122,7 @@ public class TaskTracker {
      */
 
     public synchronized long getBufferTimeNanoSec() {
-        return bufferTime.getTimeNanoSec();
+        return taskReport.getTimeNanoSec();
     }
 
 }

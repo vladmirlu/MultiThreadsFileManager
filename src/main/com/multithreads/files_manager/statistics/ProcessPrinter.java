@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Prints progress of the tasks.
  */
-public class ProgressPrinter extends Thread {
+public class ProcessPrinter extends Thread {
 
     /**
      * Statistics logger.
@@ -17,7 +17,7 @@ public class ProgressPrinter extends Thread {
     /**
      * Statistics service.
      */
-    private StatisticsService statisticsService = new StatisticsService(logger);
+    private StatisticService statisticService = new StatisticService(logger);
 
     /**
      * Tool for interaction with the src.main.com.multithreads.files_manager.statistics module.
@@ -31,17 +31,17 @@ public class ProgressPrinter extends Thread {
      * @param taskTracker tool for interaction with the src.main.com.multithreads.files_manager.statistics module
 
      */
-    public ProgressPrinter(TaskTracker taskTracker) {
+    public ProcessPrinter(TaskTracker taskTracker) {
         this.taskTracker = taskTracker;
 
     }
 
     /**
-     * Executes ProgressPrinter.
+     * Executes ProcessPrinter.
      */
     @Override
     public void run() {
-        logger.trace("ProgressPrinter started." + this);
+        logger.trace("ProcessPrinter started." + this);
         int totalProgress = 0;
         while (totalProgress < 100) {
             try {
@@ -51,11 +51,10 @@ public class ProgressPrinter extends Thread {
             }
             long completed = taskTracker.getCompletedTasks();
             long all = taskTracker.getTotalTasks();
-            totalProgress = statisticsService.calculateProgress(completed, all);
-            long timeRemaining = statisticsService.calculateTimeRemaining(taskTracker.getBufferTasks(), taskTracker
-                    .getBufferTimeNanoSec(), all - completed);
-            Map<String, Integer> progressPerSection = statisticsService
-                    .calculateProgressPerSection(taskTracker.getReportsPerSection());
+            totalProgress = statisticService.calculateProgress(completed, all);
+            long timeRemaining = statisticService.calculateTimeRemaining(taskTracker.getBufferTasks(), taskTracker.getBufferTimeNanoSec(), all - completed);
+            Map<String, Integer> progressPerSection = statisticService.calculateProgressPerSection(taskTracker.getReportsPerSection());
+
             logger.trace("Completed tasks: " + completed + "." + "Total tasks: " + all + "."
                                  + "Total progress: " + totalProgress + "." + "Time remaining: " + timeRemaining + "."
                                  + "Progress per section: " + progressPerSection + this);
@@ -67,12 +66,12 @@ public class ProgressPrinter extends Thread {
             System.out.println(progress);
             logger.trace("Printed progress." + this);
         }
-        logger.trace("ProgressPrinter completed." + this);
+        logger.trace("ProcessPrinter completed." + this);
     }
 
     @Override
     public String toString() {
-        return "ProgressPrinter{" +
+        return "ProcessPrinter{" +
                 "threadName='" + Thread.currentThread().getName() + '\'' +
                 '}';
     }

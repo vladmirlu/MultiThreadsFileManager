@@ -1,6 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
-import com.multithreads.files_manager.statistics.StatisticsService;
+import com.multithreads.files_manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -18,11 +18,11 @@ public class FileMerger {
 
     private final FileService fileService;
 
-    private final StatisticsService statisticsService;
+    private final StatisticService statisticService;
 
-    public FileMerger( FileService fileService, StatisticsService statisticsService) {
+    public FileMerger( FileService fileService, StatisticService statisticService) {
         this.fileService = fileService;
-        this.statisticsService = statisticsService;
+        this.statisticService = statisticService;
     }
 
     /**
@@ -44,19 +44,19 @@ public class FileMerger {
 
         for (int i = 0; i < iterations; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
-            Future<?> f = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile);
+            Future<?> f = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile, statisticService);
             futures.add(f);
         }
         if (iterations == files.size() - 1) {
             long totalSize = fileService.getFileCreator().calculateTotalSize(files);
-            Future<?> f = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile);
+            Future<?> f = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
             futures.add(f);
         }
         List<File> originalFiles = new ArrayList<>();
         originalFiles.add(originalFile);
 
         fileService.getFileWorkersPool().shutdown();
-        statisticsService.setStatistic(futures);
+        statisticService.setStatistic(futures);
 
         return originalFiles;
     }

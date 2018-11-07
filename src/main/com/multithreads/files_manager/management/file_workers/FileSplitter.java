@@ -1,6 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
-import com.multithreads.files_manager.statistics.StatisticsService;
+import com.multithreads.files_manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -19,12 +19,12 @@ import java.util.concurrent.Future;
 public class FileSplitter {
 
     private final FileService fileService;
-    private final StatisticsService statisticsService;
+    private final StatisticService statisticService;
 
 
-    public FileSplitter(FileService fileService, StatisticsService statisticsService) {
+    public FileSplitter(FileService fileService, StatisticService statisticService) {
        this.fileService = fileService;
-       this.statisticsService = statisticsService;
+       this.statisticService = statisticService;
     }
     /**
      * Splits file.
@@ -49,7 +49,7 @@ public class FileSplitter {
         Files.createDirectory(Paths.get(file.getParent() + "/parts"));
         for (long i = 0; i < splitsQuantity; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "." + FilenameUtils.getExtension(file.getName()));
-            Future<?> f = fileService.getWorkerFuture(file, partSize,i * partSize, 0, partFile);
+            Future<?> f = fileService.getWorkerFuture(file, partSize,i * partSize, 0, partFile, statisticService);
             futures.add(f);
             files.add(partFile);
         }
@@ -57,12 +57,12 @@ public class FileSplitter {
         long bytesLeftAmount = fileSize % partSize;
         if (bytesLeftAmount > 0) {
             File partFile = new File(file.getParent() + "/parts/" + (splitsQuantity) + "." + FilenameUtils.getExtension(file.getName()));
-            Future<?> f = fileService.getWorkerFuture(file, bytesLeftAmount,fileSize - bytesLeftAmount,0, partFile);
+            Future<?> f = fileService.getWorkerFuture(file, bytesLeftAmount,fileSize - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
             files.add(partFile);
         }
 
-        statisticsService.setStatistic(futures);
+        statisticService.setStatistic(futures);
         fileService.getFileWorkersPool().shutdown();
         return files;
     }

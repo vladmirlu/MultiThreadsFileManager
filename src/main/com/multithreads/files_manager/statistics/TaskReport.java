@@ -16,14 +16,26 @@ public class TaskReport {
     private long total;
 
     /**
+     * Buffer of tasks.
+     */
+    private long buffer;
+
+    /**
+     * Time to do buffer tasks (in nanoseconds).
+     */
+    private long timeNanoSec;
+
+    /**
      * Initializes completed and total tasks fields.
      *
      * @param completed completed tasks
      * @param total total tasks
      */
-    public TaskReport(long completed, long total) {
+    public TaskReport(long completed, long total, long buffer, long timeNanoSec) {
         this.completed = completed;
         this.total = total;
+        this.buffer = buffer;
+        this.timeNanoSec = timeNanoSec;
     }
 
     public long getCompleted() {
@@ -32,6 +44,22 @@ public class TaskReport {
 
     public long getTotal() {
         return total;
+    }
+
+    public long getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(long buffer) {
+        this.buffer = buffer;
+    }
+
+    public long getTimeNanoSec() {
+        return timeNanoSec;
+    }
+
+    public void setTimeNanoSec(long timeNanoSec) {
+        this.timeNanoSec = timeNanoSec;
     }
 
     public void setCompleted(long completed) {

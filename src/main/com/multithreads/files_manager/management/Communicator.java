@@ -5,7 +5,7 @@ import com.multithreads.files_manager.management.exception.InvalidCommandExcepti
 import com.multithreads.files_manager.management.file_workers.FileMerger;
 import com.multithreads.files_manager.management.file_workers.FileService;
 import com.multithreads.files_manager.management.file_workers.FileSplitter;
-import com.multithreads.files_manager.statistics.StatisticsService;
+import com.multithreads.files_manager.statistics.StatisticService;
 import org.apache.log4j.Logger;
 
 import java.util.Scanner;
@@ -27,9 +27,9 @@ public class Communicator {
     public Communicator(Logger logger){
         this.logger = logger;
         FileService fileService = new FileService(logger);
-        StatisticsService statisticsService = new StatisticsService(logger);
-        this.fileSplitter = new FileSplitter(fileService, statisticsService);
-        this.fileMerger = new FileMerger(fileService, statisticsService);
+        StatisticService statisticService = new StatisticService(logger);
+        this.fileSplitter = new FileSplitter(fileService, statisticService);
+        this.fileMerger = new FileMerger(fileService, statisticService);
     }
 
     /**

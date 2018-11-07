@@ -13,11 +13,11 @@ import java.util.concurrent.Future;
 /**
  * Statistics service.
  */
-public class StatisticsService {
+public class StatisticService {
 
     private final Logger logger;
 
-    public StatisticsService(Logger logger){
+    public StatisticService(Logger logger){
         this.logger = logger;
     }
     /**
@@ -71,7 +71,7 @@ public class StatisticsService {
     }
 
     public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
-        Future<?> f = statisticsPool.submit(new ProgressPrinter(taskTracker));
+        Future<?> f = statisticsPool.submit(new ProcessPrinter(taskTracker));
         futures.add(f);
         for (Future<?> future : futures) {
             future.get();
@@ -80,5 +80,16 @@ public class StatisticsService {
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
         statisticsPool.shutdown();
+    }
+
+    public void trackTaskProcess(long length, String threadName, long alreadyRead, long time) {
+        taskTracker.addCompletedTasks(length);
+        taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length, length, time));
+        taskTracker.setBufferTasks(length);
+        taskTracker.setBufferTimeNanoSec(time);
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }
