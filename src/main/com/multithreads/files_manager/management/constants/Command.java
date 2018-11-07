@@ -1,4 +1,4 @@
-package com.multithreads.files_manager.management.command;
+package com.multithreads.files_manager.management.constants;
 
 import com.multithreads.files_manager.management.exception.InvalidCommandException;
 
@@ -17,7 +17,7 @@ public enum Command {
 
     /**
      * Initializes the symbol variable.
-     * @param symbol symbol of the command
+     * @param symbol symbol of the constants
      */
     Command(String symbol) {
         this.symbol = symbol;
@@ -33,6 +33,6 @@ public enum Command {
                 return command;
             }
         }
-        throw new InvalidCommandException("Invalid command");
+        throw new InvalidCommandException("Invalid constants");
     }
 }

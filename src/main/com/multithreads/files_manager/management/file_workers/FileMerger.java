@@ -1,6 +1,4 @@
-package com.multithreads.files_manager.management.command;
-
-import com.multithreads.files_manager.management.FileService;
+package com.multithreads.files_manager.management.file_workers;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -13,12 +11,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * Merge command.
+ * Merge constants.
  */
 public class FileMerger {
 
     private final FileService fileService;
-
 
     public FileMerger( FileService fileService) {
         this.fileService = fileService;
@@ -32,7 +29,7 @@ public class FileMerger {
      * @throws InterruptedException    in case of thread interrupting
      * @throws IOException             if an I/O error occurs
      */
-    public List<File> execute() throws IOException, ExecutionException, InterruptedException {
+    public List<File> merge() throws IOException, ExecutionException, InterruptedException {
 
         List<File> files = fileService.parseFiles();
         File originalFile = fileService.getOriginalFile(files);

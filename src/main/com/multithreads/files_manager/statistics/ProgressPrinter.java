@@ -17,7 +17,7 @@ public class ProgressPrinter extends Thread {
     /**
      * Statistics service.
      */
-    private StatisticsService statisticsService = new StatisticsServiceImpl();
+    private StatisticsService statisticsService = new StatisticsService();
 
     /**
      * Tool for interaction with the src.main.com.multithreads.files_manager.statistics module.
@@ -26,7 +26,7 @@ public class ProgressPrinter extends Thread {
 
 
     /**
-     * Initializes taskTracker and command fields.
+     * Initializes taskTracker and constants fields.
      *
      * @param taskTracker tool for interaction with the src.main.com.multithreads.files_manager.statistics module
 

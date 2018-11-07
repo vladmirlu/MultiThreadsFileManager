@@ -1,11 +1,12 @@
 package com.multithreads.files_manager.statistics;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Statistics service.
  */
-public interface StatisticsService {
+public class StatisticsService {
 
     /**
      * Calculates progress in percentage.
@@ -14,7 +15,12 @@ public interface StatisticsService {
      * @param allTasks       number of total tasks
      * @return progress
      */
-    int calculateProgress(final long completedTasks, final long allTasks);
+    public int calculateProgress(final long completedTasks, final long allTasks) {
+        double semiRes = (double) completedTasks / ((double) allTasks) * 100;
+        long result = Math.round(semiRes);
+
+        return (int) result;
+    }
 
     /**
      * Calculates progress for each section.
@@ -22,16 +28,24 @@ public interface StatisticsService {
      * @param reports map of section and corresponding task report
      * @return progress for each section
      */
-    Map<String, Integer> calculateProgressPerSection(final Map<String, TaskReport> reports);
+    public Map<String, Integer> calculateProgressPerSection(final Map<String, TaskReport> reports) {
+        Map<String, Integer> unitProgress = new HashMap<>();
+        reports.forEach(
+                (id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
+
+        return unitProgress;
+    }
 
     /**
      * Calculates time remaining.
      *
      * @param bufferTasks       buffer of bytes
      * @param bufferTimeNanoSec time to read and write buffer bytes (in nanoseconds)
-     * @param remainingTasks    the number of remaining tasks
+     * @param remainingTasks    remaining tasks
      * @return time remaining
      */
-    long calculateTimeRemaining(final long bufferTasks, final long bufferTimeNanoSec, final long remainingTasks);
-
+    public long calculateTimeRemaining(final long bufferTasks, final long bufferTimeNanoSec,
+                                       final long remainingTasks) {
+        return ((remainingTasks * bufferTimeNanoSec) / bufferTasks) / 1_000_000;
+    }
 }

@@ -1,24 +1,29 @@
-package com.multithreads.files_manager.management.splitter;
+package com.multithreads.files_manager.management.constants;
 
 /**
  * Available size units (size types)
  */
-public enum SizeUnits {
+public enum FileSizeUnit {
 
     /**
      * Byte.
      */
-    B(1),
+    BYTE(1),
 
     /**
      * Kilobyte.
      */
-    K(1000),
+    KILOBYTE(1000),
 
     /**
      * Megabyte.
      */
-    M(1000 * 1000);
+    MEGABYTE(1000000),
+
+    /**
+     * Megabyte.
+     */
+    GIGABYTE(1000000000);
 
     /**
      * Coefficient for converting into bytes.
@@ -30,7 +35,7 @@ public enum SizeUnits {
      *
      * @param coefficient Coefficient for converting into bytes
      */
-    SizeUnits(int coefficient) {
+    FileSizeUnit(int coefficient) {
         this.coefficient = coefficient;
     }
 

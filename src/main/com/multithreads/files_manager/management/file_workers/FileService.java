@@ -1,21 +1,16 @@
-package com.multithreads.files_manager.management;
+package com.multithreads.files_manager.management.file_workers;
 
-import com.multithreads.files_manager.management.splitter.FileCreator;
-import com.multithreads.files_manager.management.splitter.SizeUnits;
-import com.multithreads.files_manager.management.splitter.TaskTrackerImpl;
-import com.multithreads.files_manager.management.splitter.Transfer;
-import com.multithreads.files_manager.management.splitter.provider.PropertiesProvider;
-import com.multithreads.files_manager.statistics.ProgressPrinter;
+import com.multithreads.files_manager.management.constants.FileSizeUnit;
 import com.multithreads.files_manager.statistics.TaskTracker;
+import com.multithreads.files_manager.statistics.ProgressPrinter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,59 +34,59 @@ public class FileService {
     private final ExecutorService statisticsPool = Executors.newFixedThreadPool(1);
 
     /**
-     * Tool for providing file properties.
-     */
-    private final PropertiesProvider propertiesProvider = new PropertiesProvider();
-
-    /**
      * Interface for interaction with the src.main.com.multithreads.files_manager.statistics module.
      */
-    private final TaskTracker taskTracker = new TaskTrackerImpl();
+    private final TaskTracker taskTracker = new TaskTracker();
 
     /**
      * File assistant tool.
      */
     private final FileCreator fileCreator = new FileCreator();
 
-    public static ResourceBundle rb = ResourceBundle.getBundle("application");
+    public ResourceBundle RB;
 
-    public FileService(Logger logger){
+    public FileService(Logger logger) {
         this.logger = logger;
+        try {
+            FileInputStream fis = new FileInputStream("src/main/resources/application.properties");
+            this.RB = new PropertyResourceBundle(fis);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public Future<?> getWorkerFuture(File file, long length,  long fromFileOffset, long toFileOffset,  File originalFile){
         return fileWorkersPool.submit(
-                new Transfer(file, fromFileOffset, length, originalFile, toFileOffset, propertiesProvider,
-                        taskTracker));
+                new FileTransfer(file, fromFileOffset, length, originalFile, toFileOffset, taskTracker));
     }
 
     public File getOriginalFile(List<File> files) throws IOException {
         long totalSize = fileCreator.calculateTotalSize(files);
         taskTracker.setTotalTasks(totalSize);
-        String originalFilePath = files.get(0).getParent() + "/" + propertiesProvider.SOURCE_FILENAME + "."
+        String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "."
                 + FilenameUtils.getExtension(files.get(0).getName());
         return fileCreator.createFile(originalFilePath, totalSize);
     }
 
     public List<File> parseFiles() throws FileNotFoundException{
         logger.debug("Parsing files in the directory path");
-        File directory = new File(rb.getString("splitFileDidectory"));
+        File directory = new File(RB.getString("splitFileDirectory"));
         File[] files = directory.listFiles();
         if(files != null)
         return Arrays.asList(files);
         throw new FileNotFoundException();
     }
 
-    public long parseSize(String sizeStr) {
-
-        long size = Long.parseLong(sizeStr);
-        for (SizeUnits sizeUnit : SizeUnits.values()) {
-            if (sizeStr.endsWith(String.valueOf(sizeUnit))) {
-                size = Long.parseLong(sizeStr.substring(0, sizeStr.indexOf(String.valueOf(sizeUnit))))
+    public long parseSize() {
+    File file = new File(RB.getString("filePath"));
+        long size = file.length();
+        /*for (FileSizeUnit sizeUnit : FileSizeUnit.values()) {
+            if (String.valueOf(size).endsWith(String.valueOf(sizeUnit))) {
+                size = Long.parseLong(String.valueOf(size).substring(0, String.valueOf(size).indexOf(String.valueOf(sizeUnit))))
                         * sizeUnit.getCoefficient();
             }
-        }
-        return size;
+        }*/
+        return size / 5;
     }
 
     public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
@@ -103,6 +98,7 @@ public class FileService {
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
+        shutDownTreads();
     }
 
     public void shutDownTreads(){

@@ -1,7 +1,7 @@
 package com.multithreads.files_manager.management.exception;
 
 /**
- * Exception that is thrown in case of command invalidity.
+ * Exception that is thrown in case of constants invalidity.
  */
 public class InvalidCommandException extends Exception {
 

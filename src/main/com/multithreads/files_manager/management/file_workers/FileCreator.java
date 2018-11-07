@@ -1,4 +1,4 @@
-package com.multithreads.files_manager.management.splitter;
+package com.multithreads.files_manager.management.file_workers;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,15 @@ import java.util.List;
  */
 public class FileCreator {
 
+    /**
+     * Buffer size.
+     */
+    public static final int BUFFER_SIZE = 8 * 1024;
+
+    /**
+     * Name of the file that will be created after merging.
+     */
+    public static final String SOURCE_FILENAME = "original";
     /**
      * Creates file.
      *

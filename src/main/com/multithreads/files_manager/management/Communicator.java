@@ -1,7 +1,10 @@
 package com.multithreads.files_manager.management;
 
-import com.multithreads.files_manager.management.command.*;
+import com.multithreads.files_manager.management.constants.*;
 import com.multithreads.files_manager.management.exception.InvalidCommandException;
+import com.multithreads.files_manager.management.file_workers.FileMerger;
+import com.multithreads.files_manager.management.file_workers.FileService;
+import com.multithreads.files_manager.management.file_workers.FileSplitter;
 import org.apache.log4j.Logger;
 
 import java.util.Scanner;
@@ -16,11 +19,15 @@ public class Communicator {
      */
     private final Logger logger;
 
-    private final FileService service;
+    private final FileSplitter fileSplitter;
+
+    private final FileMerger fileMerger;
 
     public Communicator(Logger logger){
         this.logger = logger;
-        this.service = new FileService(logger);
+        FileService service = new FileService(logger);
+        this.fileSplitter = new FileSplitter(service);
+        this.fileMerger = new FileMerger(service);
     }
 
     /**
@@ -28,26 +35,20 @@ public class Communicator {
      */
     public void openConsole() {
         Scanner scanner = new Scanner(System.in);
-
         try {
             Command command = chooseCommand(scanner);
             switch (command) {
                 case SPLIT:
-                    FileSplitter fileSplitter = new FileSplitter(service);
-                    System.out.println("Enter the files quantity you wont to split the file:");
-                    fileSplitter.execute(scanner.nextLine());
+                    fileSplitter.split();
                 case MERGE:
-                    FileMerger fileMerger = new FileMerger(service);
-                    fileMerger.execute();
+                    fileMerger.merge();
                 case EXIT:
                     System.out.println("good bye");
-                default:
-                    openConsole();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            openConsole();
         }
-        service.shutDownTreads();
     }
 
     Command chooseCommand(Scanner scanner) throws InvalidCommandException {
