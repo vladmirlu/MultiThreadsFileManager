@@ -62,12 +62,11 @@ public class StatisticService {
      *
      * @param bufferTasks       buffer of bytes
      * @param bufferTimeNanoSec time to read and write buffer bytes (in nanoseconds)
-     * @param remainingTasks    remaining tasks
+     * @param tasksLeft    remaining tasks
      * @return time remaining
      */
-    public long calculateTimeRemaining(final long bufferTasks, final long bufferTimeNanoSec,
-                                       final long remainingTasks) {
-        return ((remainingTasks * bufferTimeNanoSec) / bufferTasks) / 1_000_000;
+    public long geеCountTimeLeft(long bufferTasks, long bufferTimeNanoSec, long tasksLeft) {
+        return ((tasksLeft * bufferTimeNanoSec) / bufferTasks) / 1_000_000;
     }
 
     public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
@@ -91,5 +90,9 @@ public class StatisticService {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public ExecutorService getStatisticsPool() {
+        return statisticsPool;
     }
 }

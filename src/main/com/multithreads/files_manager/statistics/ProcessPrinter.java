@@ -52,7 +52,7 @@ public class ProcessPrinter extends Thread {
             long completed = taskTracker.getCompletedTasks();
             long all = taskTracker.getTotalTasks();
             totalProgress = statisticService.calculateProgress(completed, all);
-            long timeRemaining = statisticService.calculateTimeRemaining(taskTracker.getBufferTasks(), taskTracker.getBufferTimeNanoSec(), all - completed);
+            long timeRemaining = statisticService.geеCountTimeLeft(taskTracker.getBufferTasks(), taskTracker.getBufferTimeNanoSec(), all - completed);
             Map<String, Integer> progressPerSection = statisticService.calculateProgressPerSection(taskTracker.getReportsPerSection());
 
             logger.trace("Completed tasks: " + completed + "." + "Total tasks: " + all + "."

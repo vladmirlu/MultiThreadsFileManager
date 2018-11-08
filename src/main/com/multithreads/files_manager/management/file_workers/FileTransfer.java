@@ -41,14 +41,14 @@ public class FileTransfer extends Thread {
             while (fromFile.getFilePointer() - fileData.getFromFileOffset() < fileLength) {
                 if (bufferSize >= fileLength) {
 
-                    statisticService.getLogger().trace("bufferSize >= needToRead. FilePointer: " + fromFile.getFilePointer() + this);
+                    //statisticService.getLogger().trace("bufferSize >= needToRead. FilePointer: " + fromFile.getFilePointer() + this);
                     long time = copyToFileAndGetTime(fromFile, toFile, fileLength);
                     alreadyRead = alreadyRead + fileLength;
                     statisticService.trackTaskProcess(fileLength, threadName, alreadyRead, time);
 
                 } else {
 
-                    statisticService.getLogger().trace("bufferSize < needToRead. FilePointer: " + fromFile.getFilePointer() + this);
+                   // statisticService.getLogger().trace("bufferSize < needToRead. FilePointer: " + fromFile.getFilePointer() + this);
                     long time = copyToFileAndGetTime(fromFile, toFile, bufferSize);
                     fileLength = fileLength - bufferSize;
                     alreadyRead = alreadyRead + bufferSize;

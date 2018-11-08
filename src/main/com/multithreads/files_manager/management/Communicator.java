@@ -24,10 +24,14 @@ public class Communicator {
 
     private final FileMerger fileMerger;
 
+    private final FileService fileService;
+
+    private final StatisticService statisticService;
+
     public Communicator(Logger logger){
         this.logger = logger;
-        FileService fileService = new FileService(logger);
-        StatisticService statisticService = new StatisticService(logger);
+        this.fileService = new FileService(logger);
+        this.statisticService = new StatisticService(logger);
         this.fileSplitter = new FileSplitter(fileService, statisticService);
         this.fileMerger = new FileMerger(fileService, statisticService);
     }
@@ -50,6 +54,9 @@ public class Communicator {
         } catch (Exception ex) {
             ex.printStackTrace();
             openConsole();
+        } finally {
+            fileService.getFileWorkersPool().shutdown();
+            statisticService.getStatisticsPool().shutdown();
         }
     }
 

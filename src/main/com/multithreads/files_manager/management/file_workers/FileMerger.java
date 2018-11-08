@@ -44,20 +44,18 @@ public class FileMerger {
 
         for (int i = 0; i < iterations; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
-            Future<?> f = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile, statisticService);
-            futures.add(f);
+            Future<?> future = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile, statisticService);
+            futures.add(future);
         }
         if (iterations == files.size() - 1) {
             long totalSize = fileService.getFileCreator().calculateTotalSize(files);
-            Future<?> f = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
-            futures.add(f);
+            Future<?> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
+            futures.add(future);
         }
         List<File> originalFiles = new ArrayList<>();
         originalFiles.add(originalFile);
 
-        fileService.getFileWorkersPool().shutdown();
         statisticService.setStatistic(futures);
-
         return originalFiles;
     }
 }

@@ -63,7 +63,6 @@ public class FileSplitter {
         }
 
         statisticService.setStatistic(futures);
-        fileService.getFileWorkersPool().shutdown();
         return files;
     }
 }
