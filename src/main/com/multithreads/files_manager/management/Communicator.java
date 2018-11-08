@@ -45,9 +45,9 @@ public class Communicator {
             Command command = chooseCommand(scanner);
             switch (command) {
                 case SPLIT:
-                    fileSplitter.split();
+                   System.out.println(fileSplitter.split().size());
                 case MERGE:
-                    fileMerger.merge();
+                    System.out.println(fileMerger.merge().getName());
                 case EXIT:
                     System.out.println("good bye");
             }

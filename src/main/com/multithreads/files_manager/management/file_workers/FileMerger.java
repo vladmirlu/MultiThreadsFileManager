@@ -33,7 +33,7 @@ public class FileMerger {
      * @throws InterruptedException    in case of thread interrupting
      * @throws IOException             if an I/O error occurs
      */
-    public List<File> merge() throws IOException, ExecutionException, InterruptedException {
+    public File merge() throws IOException, ExecutionException, InterruptedException {
 
         List<File> files = fileService.parseFiles();
         File originalFile = fileService.getOriginalFile(files);
@@ -52,10 +52,8 @@ public class FileMerger {
             Future<?> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
             futures.add(future);
         }
-        List<File> originalFiles = new ArrayList<>();
-        originalFiles.add(originalFile);
 
         statisticService.setStatistic(futures);
-        return originalFiles;
+        return originalFile;
     }
 }
