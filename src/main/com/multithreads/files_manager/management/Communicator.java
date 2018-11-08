@@ -45,11 +45,18 @@ public class Communicator {
             Command command = chooseCommand(scanner);
             switch (command) {
                 case SPLIT:
-                   System.out.println(fileSplitter.split().size());
+                    System.out.println("Input please the complete file name(with the file path):");
+                    String filePath = scanner.nextLine();
+                    System.out.println(fileSplitter.split(scanner.nextLine()).get(1).getName());
+                    openConsole();
                 case MERGE:
-                    System.out.println(fileMerger.merge().getName());
+                    System.out.println("Input please the directory path to merge all files from there:");
+                    System.out.println(fileMerger.merge(scanner.nextLine()).getName());
+                    openConsole();
                 case EXIT:
                     System.out.println("good bye");
+                    default:
+                        openConsole();
             }
         } catch (Exception ex) {
             ex.printStackTrace();

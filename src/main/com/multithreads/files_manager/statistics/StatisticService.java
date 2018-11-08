@@ -78,7 +78,6 @@ public class StatisticService {
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
-        statisticsPool.shutdown();
     }
 
     public void trackTaskProcess(long length, String threadName, long alreadyRead, long time) {

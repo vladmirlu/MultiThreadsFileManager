@@ -33,27 +33,27 @@ public class FileMerger {
      * @throws InterruptedException    in case of thread interrupting
      * @throws IOException             if an I/O error occurs
      */
-    public File merge() throws IOException, ExecutionException, InterruptedException {
+    public File merge(String directoryPath) throws IOException, ExecutionException, InterruptedException {
 
-        List<File> files = fileService.parseFiles();
+        List<File> files = fileService.parseFiles(directoryPath);
         File originalFile = fileService.getOriginalFile(files);
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 
         long iterations = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 : files.size();
-        List<Future<?>> futures = new ArrayList<>();
+        List<Future<File>> futures = new ArrayList<>();
 
         for (int i = 0; i < iterations; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
-            Future<?> future = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile, statisticService);
+            Future<File> future = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile, statisticService);
             futures.add(future);
         }
         if (iterations == files.size() - 1) {
             long totalSize = fileService.getFileCreator().calculateTotalSize(files);
-            Future<?> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
+            Future<File> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
             futures.add(future);
         }
 
-        statisticService.setStatistic(futures);
-        return originalFile;
+       // statisticService.setStatistic(futures);
+        return futures.get(0).get();
     }
 }

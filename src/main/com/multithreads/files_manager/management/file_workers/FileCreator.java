@@ -1,8 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -10,6 +8,22 @@ import java.util.List;
  */
 public class FileCreator {
 
+
+    public File getDirectory(String directoryPath) throws FileNotFoundException{
+      File directory =  new File(directoryPath);
+      if(directory.exists()){
+          return directory;
+      }
+      throw new FileNotFoundException();
+    }
+
+    public File getFile(String filePath) throws FileNotFoundException{
+       File file =  new File(filePath);
+       if(file.exists()){
+           return file;
+       }
+        throw new FileNotFoundException();
+    }
     /**
      * Buffer size.
      */
@@ -56,9 +70,8 @@ public class FileCreator {
     public long calculateTotalSize(final List<File> files) {
         long totalSize = 0;
         for (File file : files) {
-            totalSize = totalSize + file.length();
+            totalSize += file.length();
         }
-
         return totalSize;
     }
 }

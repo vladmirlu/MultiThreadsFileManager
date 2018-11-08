@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Split constants.
@@ -35,34 +36,29 @@ public class FileSplitter {
      * @throws IOException             if an I/O error occurs
      */
 
-    public List<File> split() throws IOException, ExecutionException, InterruptedException {
+    public List<File> split(String filePath, String splitFileSize) throws IOException, ExecutionException, InterruptedException {
 
-        File file = new File(fileService.RB.getString("filePath"));
+        File file = fileService.getFileCreator().getFile(filePath);
 
-        long partSize = fileService.parseSize();
+        long partSize = fileService.parseSize(filePath, splitFileSize);
         long fileSize = file.length();
         long splitsQuantity = fileSize / partSize;
-
-        List<Future<?>> futures = new ArrayList<>();
-        List<File> files = new ArrayList<>();
+        List<Future<File>> futures = new ArrayList<>();
 
         Files.createDirectory(Paths.get(file.getParent() + "/parts"));
         for (long i = 0; i < splitsQuantity; i++) {
             File partFile = new File(file.getParent() + "/parts/" + i + "." + FilenameUtils.getExtension(file.getName()));
-            Future<?> f = fileService.getWorkerFuture(file, partSize,i * partSize, 0, partFile, statisticService);
+            Future<File> f = fileService.getWorkerFuture(file, partSize,i * partSize, 0, partFile, statisticService);
             futures.add(f);
-            files.add(partFile);
         }
 
         long bytesLeftAmount = fileSize % partSize;
         if (bytesLeftAmount > 0) {
             File partFile = new File(file.getParent() + "/parts/" + (splitsQuantity) + "." + FilenameUtils.getExtension(file.getName()));
-            Future<?> f = fileService.getWorkerFuture(file, bytesLeftAmount,fileSize - bytesLeftAmount,0, partFile, statisticService);
+            Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,fileSize - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
-            files.add(partFile);
         }
-
-        statisticService.setStatistic(futures);
-        return files;
+       // statisticService.setStatistic(futures);
+        return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
     }
 }
