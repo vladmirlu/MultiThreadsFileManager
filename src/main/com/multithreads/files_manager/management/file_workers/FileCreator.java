@@ -1,12 +1,30 @@
 package com.multithreads.files_manager.management.file_workers;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * File assistant tool.
  */
 public class FileCreator {
+
+    private final Logger logger;
+
+    private ResourceBundle RB;
+
+    FileCreator(Logger logger){
+        this.logger = logger;
+        try {
+            RB = ResourceBundle.getBundle("../application.properties");
+        }catch (MissingResourceException e){
+            logger.error("Error! Could not load property file /src/main/resources/application.properties");
+            e.printStackTrace();
+        }
+    }
 
 
     public File getDirectory(String directoryPath) throws FileNotFoundException{
@@ -14,7 +32,10 @@ public class FileCreator {
       if(directory.exists()){
           return directory;
       }
-      throw new FileNotFoundException();
+      else{
+          logger.warn("Parsing files in the directory path");
+          return new File (RB.getString("splitFileDirectory"));
+      }
     }
 
     public File getFile(String filePath) throws FileNotFoundException{
@@ -22,6 +43,7 @@ public class FileCreator {
        if(file.exists()){
            return file;
        }
+        logger.error("Error! File " + filePath + " not found");
         throw new FileNotFoundException();
     }
     /**
@@ -42,7 +64,7 @@ public class FileCreator {
      * @throws IOException if an I/O error occurs.
      */
 
-    public File createFile(final String filePath, final long size) throws IOException {
+    public File createFile(String filePath, long size) throws IOException {
         File file = new File(filePath);
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
         long restToRead = size;

@@ -36,26 +36,23 @@ public class FileSplitter {
      * @throws IOException             if an I/O error occurs
      */
 
-    public List<File> split(String filePath, String splitFileSize) throws IOException, ExecutionException, InterruptedException {
+    public List<File> split(String filePath, String partFileSize) throws IOException, ExecutionException, InterruptedException {
 
         File file = fileService.getFileCreator().getFile(filePath);
-
-        long partSize = fileService.parseSize(filePath, splitFileSize);
-        long fileSize = file.length();
-        long splitsQuantity = fileSize / partSize;
+        long partSize = fileService.getFilePartSize(file, partFileSize);
+        long bytesLeftAmount = file.length() % partSize;
+        long partsQuantity = bytesLeftAmount == 0 ? file.length() / partSize : (file.length() - bytesLeftAmount) / partSize + 1;
         List<Future<File>> futures = new ArrayList<>();
 
-        Files.createDirectory(Paths.get(file.getParent() + "/parts"));
-        for (long i = 0; i < splitsQuantity; i++) {
-            File partFile = new File(file.getParent() + "/parts/" + i + "." + FilenameUtils.getExtension(file.getName()));
+        Files.createDirectory(Paths.get(file.getParent() + "/split"));
+        for (long i = 0; i < partsQuantity; i++) {
+            File partFile = new File(file.getParent() + "/split/" + i + "." + FilenameUtils.getExtension(file.getName()));
             Future<File> f = fileService.getWorkerFuture(file, partSize,i * partSize, 0, partFile, statisticService);
             futures.add(f);
         }
-
-        long bytesLeftAmount = fileSize % partSize;
         if (bytesLeftAmount > 0) {
-            File partFile = new File(file.getParent() + "/parts/" + (splitsQuantity) + "." + FilenameUtils.getExtension(file.getName()));
-            Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,fileSize - bytesLeftAmount,0, partFile, statisticService);
+            File partFile = new File(file.getParent() + "/split/" + (partsQuantity) + "." + FilenameUtils.getExtension(file.getName()));
+            Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
        // statisticService.setStatistic(futures);

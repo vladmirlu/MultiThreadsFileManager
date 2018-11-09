@@ -35,7 +35,7 @@ public class FileMerger {
      */
     public File merge(String directoryPath) throws IOException, ExecutionException, InterruptedException {
 
-        List<File> files = fileService.parseFiles(directoryPath);
+        List<File> files = fileService.getSplitFilesList(directoryPath);
         File originalFile = fileService.getOriginalFile(files);
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 

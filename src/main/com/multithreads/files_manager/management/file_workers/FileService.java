@@ -23,15 +23,17 @@ public class FileService {
     /**
      * File workers thread pool.
      */
-    private final  ExecutorService fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final  ExecutorService fileWorkersPool;
 
     /**
      * File assistant tool.
      */
-    private final FileCreator fileCreator = new FileCreator();
+    private final FileCreator fileCreator;
 
     public FileService(Logger logger) {
         this.logger = logger;
+        this.fileCreator  = new FileCreator(logger);
+        this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     public Future<File> getWorkerFuture(File parentFile, long length,  long fromFileOffset, long toFileOffset,  File childFile,  StatisticService statService){
@@ -45,25 +47,27 @@ public class FileService {
         return fileCreator.createFile(originalFilePath, totalSize);
     }
 
-    public List<File> parseFiles(String directoryPath) throws FileNotFoundException{
+    public List<File> getSplitFilesList(String directoryPath) throws FileNotFoundException{
         logger.debug("Parsing files in the directory path");
         File directory = fileCreator.getDirectory(directoryPath);
         File[] files = directory.listFiles();
         if(files != null)
         return Arrays.asList(files);
+        logger.error("Error! Not found files to merge in the directory "+ directory.getName());
         throw new FileNotFoundException();
     }
 
-    public long parseSize(String filePath, String splitFileSize) throws FileNotFoundException{
-    File file = fileCreator.getFile(filePath);
-        long size = file.length();
-        /*for (FileSizeUnit sizeUnit : FileSizeUnit.values()) {
-            if (String.valueOf(size).endsWith(String.valueOf(sizeUnit))) {
-                size = Long.parseLong(String.valueOf(size).substring(0, String.valueOf(size).indexOf(String.valueOf(sizeUnit))))
-                        * sizeUnit.getCoefficient();
-            }
-        }*/
-        return size / 5;
+    public long getFilePartSize(File file, String splitFileSize) throws FileNotFoundException{
+
+        long splitSize = Long.parseLong(splitFileSize);
+        if(file.length() <= splitSize){
+         return file.length();
+        }
+       else {
+           long bytesLeft = file.length() % splitSize;
+           long partsQuantity = (file.length() - bytesLeft) / splitSize;
+           return (file.length() - bytesLeft) / partsQuantity;
+        }
     }
 
     public ExecutorService getFileWorkersPool() {
