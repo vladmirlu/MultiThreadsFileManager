@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.util.List;
 import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
@@ -19,9 +20,12 @@ public class FileCreator {
     FileCreator(Logger logger){
         this.logger = logger;
         try {
-            RB = ResourceBundle.getBundle("../application.properties");
-        }catch (MissingResourceException e){
-            logger.error("Error! Could not load property file /src/main/resources/application.properties");
+            FileInputStream fis = new FileInputStream("src/main/resources/application.properties");
+            this.RB = new PropertyResourceBundle(fis);
+        }catch (MissingResourceException m){
+            m.printStackTrace();
+        }
+        catch (IOException e){
             e.printStackTrace();
         }
     }

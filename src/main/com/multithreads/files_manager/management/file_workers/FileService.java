@@ -47,12 +47,13 @@ public class FileService {
         return fileCreator.createFile(originalFilePath, totalSize);
     }
 
-    public List<File> getSplitFilesList(String directoryPath) throws FileNotFoundException{
+    public List<File> getSplitFilesList(String directoryPath) throws FileNotFoundException {
         logger.debug("Parsing files in the directory path");
         File directory = fileCreator.getDirectory(directoryPath);
         File[] files = directory.listFiles();
-        if(files != null)
-        return Arrays.asList(files);
+        if(files != null) {
+            return Arrays.asList(files);
+        }
         logger.error("Error! Not found files to merge in the directory "+ directory.getName());
         throw new FileNotFoundException();
     }

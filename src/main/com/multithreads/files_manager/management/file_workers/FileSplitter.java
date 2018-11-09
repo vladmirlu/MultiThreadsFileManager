@@ -39,6 +39,7 @@ public class FileSplitter {
     public List<File> split(String filePath, String partFileSize) throws IOException, ExecutionException, InterruptedException {
 
         File file = fileService.getFileCreator().getFile(filePath);
+        System.out.println(file.hashCode());
         long partSize = fileService.getFilePartSize(file, partFileSize);
         long bytesLeftAmount = file.length() % partSize;
         long partsQuantity = bytesLeftAmount == 0 ? file.length() / partSize : (file.length() - bytesLeftAmount) / partSize + 1;
@@ -51,11 +52,16 @@ public class FileSplitter {
             futures.add(f);
         }
         if (bytesLeftAmount > 0) {
-            File partFile = new File(file.getParent() + "/split/" + (partsQuantity) + "." + FilenameUtils.getExtension(file.getName()));
+            File partFile = new File(file.getParent() + "/split/" + partsQuantity + "." + FilenameUtils.getExtension(file.getName()));
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
        // statisticService.setStatistic(futures);
+        for(Future<File> future: futures){
+            if (future.isDone()){
+                    
+            }
+        }
         return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
     }
 }
