@@ -29,7 +29,6 @@ public class ProcessPrinter extends Thread {
      * Initializes taskTracker and constants fields.
      *
      * @param taskTracker tool for interaction with the src.main.com.multithreads.files_manager.statistics module
-
      */
     public ProcessPrinter(TaskTracker taskTracker) {
         this.taskTracker = taskTracker;

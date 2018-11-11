@@ -18,11 +18,9 @@ public class RunApplication {
      */
     public static void main(String[] args) {
         logger.info("Main method started.");
-        try {
+
             Communicator communicator = new Communicator(logger);
             communicator.openConsole();
-        } catch (Throwable tr) {
-            logger.error("Error");
-        }
+
     }
 }

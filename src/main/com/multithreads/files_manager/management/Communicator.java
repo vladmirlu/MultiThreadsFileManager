@@ -49,7 +49,7 @@ public class Communicator {
                     String filePath = scanner.nextLine();
                     System.out.println("Input please the size in bytes of file split part:");
                     String splitSize = scanner.nextLine();
-                    System.out.println(fileSplitter.split(filePath, splitSize).get(1).getName());
+                    System.out.println(fileSplitter.split(filePath, splitSize).size());
                     openConsole();
                 case MERGE:
                     System.out.println("Input please the directory path to merge all files from there:");

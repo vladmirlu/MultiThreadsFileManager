@@ -52,8 +52,8 @@ public class FileMerger {
             Future<File> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
             futures.add(future);
         }
-        fileService.getFileWorkersPool().shutdown();
+
        // statisticService.setStatistic(futures);
-        return futures.get(0).get();
+        return  futures.get(0).get();
     }
 }

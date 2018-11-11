@@ -40,9 +40,9 @@ public class FileSplitter {
 
         File file = fileService.getFileCreator().getFile(filePath);
         System.out.println(file.hashCode());
-        long partSize = fileService.getFilePartSize(file, partFileSize);
+        long partSize = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
         long bytesLeftAmount = file.length() % partSize;
-        long partsQuantity = bytesLeftAmount == 0 ? file.length() / partSize : (file.length() - bytesLeftAmount) / partSize + 1;
+        long partsQuantity = (file.length() - bytesLeftAmount) / partSize;
         List<Future<File>> futures = new ArrayList<>();
 
         Files.createDirectory(Paths.get(file.getParent() + "/split"));
@@ -56,12 +56,9 @@ public class FileSplitter {
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
-       // statisticService.setStatistic(futures);
-        for(Future<File> future: futures){
-            if (future.isDone()){
-                    
-            }
-        }
+
+        //statisticService.setStatistic(futures);
+
         return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
     }
 }

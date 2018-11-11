@@ -1,6 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
-import com.multithreads.files_manager.management.model.FileData;
+import com.multithreads.files_manager.management.model.FilesDTO;
 import com.multithreads.files_manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -35,10 +35,10 @@ public class FileService {
         this.fileCreator  = new FileCreator(logger);
         this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
-
+    @SuppressWarnings("unchacked")
     public Future<File> getWorkerFuture(File parentFile, long length,  long fromFileOffset, long toFileOffset,  File childFile,  StatisticService statService){
-        FileData fileData = new FileData(parentFile, childFile, fromFileOffset, toFileOffset, length);
-        return fileWorkersPool.submit(new FileTransfer(fileData, statService), childFile);
+        FilesDTO filesDTO = new FilesDTO(parentFile, childFile, fromFileOffset, toFileOffset, length);
+        return fileWorkersPool.submit(new FileFillTask(filesDTO, statService));
     }
 
     public File getOriginalFile(List<File> files) throws IOException {
@@ -56,19 +56,6 @@ public class FileService {
         }
         logger.error("Error! Not found files to merge in the directory "+ directory.getName());
         throw new FileNotFoundException();
-    }
-
-    public long getFilePartSize(File file, String splitFileSize) throws FileNotFoundException{
-
-        long splitSize = Long.parseLong(splitFileSize);
-        if(file.length() <= splitSize){
-         return file.length();
-        }
-       else {
-           long bytesLeft = file.length() % splitSize;
-           long partsQuantity = (file.length() - bytesLeft) / splitSize;
-           return (file.length() - bytesLeft) / partsQuantity;
-        }
     }
 
     public ExecutorService getFileWorkersPool() {

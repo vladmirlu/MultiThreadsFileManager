@@ -70,6 +70,7 @@ public class StatisticService {
     }
 
     public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
+
         Future<?> f = statisticsPool.submit(new ProcessPrinter(taskTracker));
         futures.add(f);
         for (Future<?> future : futures) {
