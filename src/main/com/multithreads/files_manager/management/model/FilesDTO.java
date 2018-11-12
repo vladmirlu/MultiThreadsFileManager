@@ -1,6 +1,8 @@
 package com.multithreads.files_manager.management.model;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class FilesDTO {
 
@@ -24,25 +26,24 @@ public class FilesDTO {
     /**
      * Number of bytes to transfer.
      */
-    private long fileLength;
+    private long fileWriteLength;
 
     /**
      * Initializes class fields.
      *
      * @param fileToRead       file from which to transfer the bytes
      * @param fileToReadOffset pointer offset in the file from which to transfer the bytes
-     * @param fileLength         number of bytes to transfer
+     * @param fileWriteLength         number of bytes to transfer
      * @param fileToWrite         transfer destination file
      * @param fileToWriteOffset   pointer offset in the transfer destination file
      */
-   public FilesDTO(File fileToRead, File fileToWrite, long fileToReadOffset, long fileToWriteOffset, long fileLength){
+   public FilesDTO(File fileToRead, File fileToWrite, long fileToReadOffset, long fileToWriteOffset, long fileWriteLength){
 
            this.fileToRead = fileToRead;
            this.fileToWrite = fileToWrite;
+           this.fileWriteLength = fileWriteLength;
            this.fileToReadOffset = fileToReadOffset;
            this.fileToWriteOffset = fileToWriteOffset;
-           this.fileLength = fileLength;
-
     }
 
     public File getFileToRead() {
@@ -54,7 +55,6 @@ public class FilesDTO {
     }
 
 
-
     public long getFileToReadOffset() {
         return fileToReadOffset;
     }
@@ -63,8 +63,8 @@ public class FilesDTO {
         return fileToWriteOffset;
     }
 
-    public long getFileLength() {
-        return fileLength;
+    public long getFileWriteLength() {
+        return fileWriteLength;
     }
 
 }

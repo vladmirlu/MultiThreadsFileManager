@@ -35,10 +35,11 @@ public class FileService {
         this.fileCreator  = new FileCreator(logger);
         this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
+
     @SuppressWarnings("unchacked")
-    public Future<File> getWorkerFuture(File parentFile, long length,  long fromFileOffset, long toFileOffset,  File childFile,  StatisticService statService){
+    public Future<File> getWorkerFuture(File parentFile, long length,  long fromFileOffset, long toFileOffset,  File childFile,  StatisticService statService) throws IOException{
         FilesDTO filesDTO = new FilesDTO(parentFile, childFile, fromFileOffset, toFileOffset, length);
-        return fileWorkersPool.submit(new FileFillTask(filesDTO, statService));
+        return fileWorkersPool.submit(new FileFillTask(filesDTO, statService, logger));
     }
 
     public File getOriginalFile(List<File> files) throws IOException {

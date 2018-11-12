@@ -40,7 +40,7 @@ public class FileMerger {
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 
         long count = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 : files.size();
-        List<Future<File>> futures = new ArrayList<>();
+        List<Future<?>> futures = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
@@ -53,7 +53,7 @@ public class FileMerger {
             futures.add(future);
         }
 
-       // statisticService.setStatistic(futures);
-        return  futures.get(0).get();
+        statisticService.setStatistic(futures);
+        return  (File) futures.get(0).get();
     }
 }

@@ -72,13 +72,13 @@ public class FileCreator {
         File file = new File(filePath);
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
         long restToRead = size;
-        long bufferSize = 8 * 1024;
+
         while (randomAccessFile.length() < size) {
-            if (restToRead <= bufferSize) {
+            if (restToRead <= BUFFER_SIZE) {
                 randomAccessFile.write(new byte[(int) restToRead]);
             } else {
-                randomAccessFile.write(new byte[(int) bufferSize]);
-                restToRead = restToRead - bufferSize;
+                randomAccessFile.write(new byte[(int) BUFFER_SIZE]);
+                restToRead = restToRead - BUFFER_SIZE;
             }
         }
         randomAccessFile.close();

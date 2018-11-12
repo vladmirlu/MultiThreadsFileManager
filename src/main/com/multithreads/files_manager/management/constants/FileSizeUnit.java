@@ -28,18 +28,28 @@ public enum FileSizeUnit {
     /**
      * Coefficient for converting into bytes.
      */
-    private int coefficient;
+    private long coefficient;
 
     /**
      * Initializes coefficient.
      *
      * @param coefficient Coefficient for converting into bytes
      */
-    FileSizeUnit(int coefficient) {
+    FileSizeUnit(long coefficient) {
         this.coefficient = coefficient;
     }
 
-    public int getCoefficient() {
+    public long getCoefficient() {
         return coefficient;
+    }
+
+    public static FileSizeUnit getFileSizeUnit(long fileSplitLength){
+        FileSizeUnit sizeUnit = BYTE;
+        for(FileSizeUnit fileSizeUnit: FileSizeUnit.values()){
+            if(fileSplitLength / fileSizeUnit.coefficient >= 1){
+                sizeUnit = fileSizeUnit;
+            }
+        }
+        return sizeUnit;
     }
 }

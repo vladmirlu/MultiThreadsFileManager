@@ -49,7 +49,7 @@ public class Communicator {
                     String filePath = scanner.nextLine();
                     System.out.println("Input please the size in bytes of file split part:");
                     String splitSize = scanner.nextLine();
-                    System.out.println(fileSplitter.split(filePath, splitSize).size());
+                    System.out.println("Quantity of split files = " + fileSplitter.split(filePath, splitSize).size());
                     openConsole();
                 case MERGE:
                     System.out.println("Input please the directory path to merge all files from there:");
@@ -70,9 +70,9 @@ public class Communicator {
     }
 
     Command chooseCommand(Scanner scanner) throws InvalidCommandException {
-        System.out.println("To split file input " + Command.SPLIT.getSymbol()
-                + "\n" + "To merge file input " + Command.MERGE.getSymbol()
-                + "\n" + "To exit input " + Command.EXIT.getSymbol());
+        System.out.println(Command.SPLIT.getMessage() + Command.SPLIT.getSymbol()
+                + "\n" + Command.MERGE.getMessage() + Command.MERGE.getSymbol()
+                + "\n" + Command.EXIT.getMessage() + Command.EXIT.getSymbol());
         Command command = Command.getCommand(scanner.nextLine());
         return command;
     }

@@ -1,5 +1,6 @@
 package com.multithreads.files_manager.management.file_workers;
 
+import com.multithreads.files_manager.management.model.FilesDTO;
 import com.multithreads.files_manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 
@@ -40,15 +41,15 @@ public class FileSplitter {
 
         File file = fileService.getFileCreator().getFile(filePath);
         System.out.println(file.hashCode());
-        long partSize = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
-        long bytesLeftAmount = file.length() % partSize;
-        long partsQuantity = (file.length() - bytesLeftAmount) / partSize;
-        List<Future<File>> futures = new ArrayList<>();
+        long splitFileLength = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
+        long bytesLeftAmount = file.length() % splitFileLength;
+        long partsQuantity = (file.length() - bytesLeftAmount) / splitFileLength;
+        List<Future<?>> futures = new ArrayList<>();
 
         Files.createDirectory(Paths.get(file.getParent() + "/split"));
         for (long i = 0; i < partsQuantity; i++) {
             File partFile = new File(file.getParent() + "/split/" + i + "." + FilenameUtils.getExtension(file.getName()));
-            Future<File> f = fileService.getWorkerFuture(file, partSize,i * partSize, 0, partFile, statisticService);
+            Future<File> f = fileService.getWorkerFuture(file, splitFileLength,i * splitFileLength, 0, partFile, statisticService);
             futures.add(f);
         }
         if (bytesLeftAmount > 0) {
@@ -56,9 +57,8 @@ public class FileSplitter {
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
+        statisticService.setStatistic(futures);
 
-        //statisticService.setStatistic(futures);
-
-        return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
+        return  (List<File>)futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
     }
 }

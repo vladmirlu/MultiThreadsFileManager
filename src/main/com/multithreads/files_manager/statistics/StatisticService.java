@@ -88,10 +88,6 @@ public class StatisticService {
         taskTracker.setBufferTimeNanoSec(time);
     }
 
-    public Logger getLogger() {
-        return logger;
-    }
-
     public ExecutorService getStatisticsPool() {
         return statisticsPool;
     }

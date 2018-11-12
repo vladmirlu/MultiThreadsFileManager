@@ -32,7 +32,6 @@ public class ProcessPrinter extends Thread {
      */
     public ProcessPrinter(TaskTracker taskTracker) {
         this.taskTracker = taskTracker;
-
     }
 
     /**
