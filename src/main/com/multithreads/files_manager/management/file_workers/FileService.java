@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -42,7 +43,7 @@ public class FileService {
         return fileWorkersPool.submit(new FileFillTask(filesDTO, statService, logger));
     }
 
-    public File getOriginalFile(List<File> files) throws IOException {
+    public File createOriginalFile(List<File> files) throws IOException {
         long totalSize = fileCreator.calculateTotalSize(files);
         String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "." + FilenameUtils.getExtension(files.get(0).getName());
         return fileCreator.createFile(originalFilePath, totalSize);

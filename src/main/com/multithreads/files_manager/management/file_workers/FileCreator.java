@@ -31,7 +31,7 @@ public class FileCreator {
     }
 
 
-    public File getDirectory(String directoryPath) throws FileNotFoundException{
+    public File getDirectory(String directoryPath) {
       File directory =  new File(directoryPath);
       if(directory.exists()){
           return directory;

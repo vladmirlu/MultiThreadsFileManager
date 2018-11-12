@@ -3,7 +3,6 @@ package com.multithreads.files_manager.statistics;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,6 +18,7 @@ public class StatisticService {
 
     public StatisticService(Logger logger){
         this.logger = logger;
+        this.taskTracker  = new TaskTracker();
     }
     /**
      * Statistics thread pool.
@@ -28,7 +28,7 @@ public class StatisticService {
     /**
      * Interface for interaction with the src.main.com.multithreads.files_manager.statistics module.
      */
-    private final TaskTracker taskTracker = new TaskTracker();
+    private TaskTracker taskTracker;
     /**
      * Calculates progress in percentage.
      *
@@ -49,10 +49,9 @@ public class StatisticService {
      * @param reports map of section and corresponding task report
      * @return progress for each section
      */
-    public Map<String, Integer> calculateProgressPerSection(final Map<String, TaskReport> reports) {
+    public Map<String, Integer> calculateTaskProgress(final Map<String, TaskReport> reports) {
         Map<String, Integer> unitProgress = new HashMap<>();
-        reports.forEach(
-                (id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
+        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
 
         return unitProgress;
     }
@@ -65,27 +64,36 @@ public class StatisticService {
      * @param tasksLeft    remaining tasks
      * @return time remaining
      */
-    public long geеCountTimeLeft(long bufferTasks, long bufferTimeNanoSec, long tasksLeft) {
-        return ((tasksLeft * bufferTimeNanoSec) / bufferTasks) / 1_000_000;
+    public long getCountTimeLeft(long bufferTasks, long bufferTimeNanoSec, long tasksLeft) {
+        return ((tasksLeft * bufferTimeNanoSec) / bufferTasks) / 1000000;
     }
 
-    public void setStatistic(List<Future<?>> futures) throws InterruptedException, ExecutionException {
-
-        Future<?> f = statisticsPool.submit(new ProcessPrinter(taskTracker));
-        futures.add(f);
-        for (Future<?> future : futures) {
-            future.get();
-        }
+    public TaskTracker resetTaskTracker(){
         taskTracker.setTotalTasks(0);
         taskTracker.setCompletedTasks(0);
         taskTracker.getReportsPerSection().clear();
+        return taskTracker;
     }
 
-    public void trackTaskProcess(long length, String threadName, long alreadyRead, long time) {
-        taskTracker.addCompletedTasks(length);
-        taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length, length, time));
-        taskTracker.setBufferTasks(length);
-        taskTracker.setBufferTimeNanoSec(time);
+    public void trackTaskProcess(long length, String threadName, long alreadyRead, long time){
+
+            taskTracker.addCompletedTasks(length);
+            taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length, length, time));
+            taskTracker.setBufferTasks(length);
+            taskTracker.setBufferTimeNanoSec(time);
+
+    }
+
+    public void getTaskTracking(){
+        try {
+            Future<TaskTracker> future = statisticsPool.submit(new ProcessPrinter(taskTracker, this), taskTracker);
+                future.get();
+        } catch (ExecutionException e){
+            e.printStackTrace();
+        }catch (InterruptedException i){
+            i.printStackTrace();
+        }
+        taskTracker = resetTaskTracker();
     }
 
     public ExecutorService getStatisticsPool() {

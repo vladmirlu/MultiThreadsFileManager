@@ -28,6 +28,7 @@ public class FileSplitter {
        this.fileService = fileService;
        this.statisticService = statisticService;
     }
+
     /**
      * Splits file.
      *
@@ -36,15 +37,14 @@ public class FileSplitter {
      * @throws InterruptedException    in case of thread interrupting
      * @throws IOException             if an I/O error occurs
      */
-
-    public List<File> split(String filePath, String partFileSize) throws IOException, ExecutionException, InterruptedException {
+    public List<File> split(String filePath, String partFileSize) throws IOException{
 
         File file = fileService.getFileCreator().getFile(filePath);
         System.out.println(file.hashCode());
         long splitFileLength = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
         long bytesLeftAmount = file.length() % splitFileLength;
         long partsQuantity = (file.length() - bytesLeftAmount) / splitFileLength;
-        List<Future<?>> futures = new ArrayList<>();
+        List<Future<File>> futures = new ArrayList<>();
 
         Files.createDirectory(Paths.get(file.getParent() + "/split"));
         for (long i = 0; i < partsQuantity; i++) {
@@ -57,8 +57,7 @@ public class FileSplitter {
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
-        statisticService.setStatistic(futures);
-
-        return  (List<File>)futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
+        statisticService.getTaskTracking();
+        return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
     }
 }
