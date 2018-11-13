@@ -1,6 +1,6 @@
-package com.multithreads.files_manager.management.constants;
+package com.multithreads.manager.management.constants;
 
-import com.multithreads.files_manager.management.exception.InvalidCommandException;
+import com.multithreads.manager.management.exception.InvalidCommandException;
 
 /**
  * Available commands.

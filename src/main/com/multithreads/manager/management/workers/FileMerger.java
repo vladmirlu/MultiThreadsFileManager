@@ -1,6 +1,6 @@
-package com.multithreads.files_manager.management.file_workers;
+package com.multithreads.manager.management.workers;
 
-import com.multithreads.files_manager.statistics.StatisticService;
+import com.multithreads.manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class FileMerger {
             Future<File> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile, statisticService);
             futures.add(future);
         }
-        statisticService.getTaskTracking();
+        System.out.println(statisticService.getTaskTracking());
         return  futures.get(0).get();
     }
 }

@@ -1,18 +1,19 @@
-package com.multithreads.files_manager.statistics;
+package com.multithreads.manager.statistics;
 
 import org.apache.log4j.Logger;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * Prints progress of the tasks.
  */
-public class ProcessPrinter implements Runnable {
+public class ProcessPrinter implements Callable {
 
     /**
      * Statistics logger.
      */
-    private static final Logger logger = Logger.getLogger("stat-logs");
+    private final Logger logger;
 
     /**
      * Statistics service.
@@ -20,7 +21,7 @@ public class ProcessPrinter implements Runnable {
     private final StatisticService statisticService;
 
     /**
-     * Tool for interaction with the src.main.com.multithreads.files_manager.statistics module.
+     * Tool for interaction with the src.main.com.multithreads.manager.statistics module.
      */
     private TaskTracker taskTracker;
 
@@ -28,18 +29,21 @@ public class ProcessPrinter implements Runnable {
     /**
      * Initializes taskTracker and constants fields.
      *
-     * @param taskTracker tool for interaction with the src.main.com.multithreads.files_manager.statistics module
+     * @param taskTracker tool for interaction with the src.main.com.multithreads.manager.statistics module
      */
-    public ProcessPrinter(TaskTracker taskTracker, StatisticService statisticService) {
+    public ProcessPrinter(TaskTracker taskTracker, StatisticService statisticService, Logger logger ) {
         this.taskTracker = taskTracker;
         this.statisticService = statisticService;
+        this.logger = logger;
     }
 
     /**
      * Executes ProcessPrinter.
      */
     @Override
-    public void run() {
+    public String call() {
+
+        String statResult = "";
         logger.trace("ProcessPrinter started." + this);
         int totalProgress = 0;
         while (totalProgress < 100) {
@@ -53,23 +57,24 @@ public class ProcessPrinter implements Runnable {
             long all = taskTracker.getTotalTasks();
 
             totalProgress = statisticService.calculateProgress(completed, all);
-            System.out.println(buildProgress(completed, all, totalProgress));
+            statResult = buildProgress(completed, all, totalProgress);
 
             logger.trace("Printed progress." + this);
         }
         logger.trace("ProcessPrinter completed." + this);
+        return statResult;
     }
 
     String buildProgress(Long completed, Long all, Integer totalProgress){
 
-        long timeRemaining = statisticService.getCountTimeLeft(taskTracker.getBufferTasks(), taskTracker.getBufferTimeNanoSec(), all - completed);
-        Map<String, Integer> taskProgress = statisticService.calculateTaskProgress(taskTracker.getReportsPerSection());
-        logger.trace("Completed tasks: " + completed + "." + "Total tasks: " + all + "." + "Total progress: " + totalProgress + "." + "Time remaining: " + timeRemaining + "." + "Progress per section: " + taskProgress + this);
+        long timeLeft = statisticService.getCountTimeLeft(taskTracker.getBufferTasks(), taskTracker.getBufferTimeNanoSec(), all - completed);
+        Map<String, Integer> taskProgress = statisticService.calculateTasksProgress(taskTracker.getReportsPerSection());
+        logger.debug("Completed tasks: " + completed + "." + "Total tasks: " + all + "." + "Total progress: " + totalProgress + "." + "Time remaining: " + timeLeft + "." + "Progress per section: " + taskProgress + this);
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
-        taskProgress.forEach((name, percent) -> progressBuilder.append(name).append(": ").append(percent).append("%, "));
-        progressBuilder.append("Time remaining: ").append(timeRemaining).append("ms");
+        taskProgress.forEach((threadName, percent) -> progressBuilder.append(threadName).append(": ").append(percent).append("%, "));
+        progressBuilder.append("Time remaining: ").append(timeLeft).append("ms");
         return progressBuilder.toString();
     }
 }

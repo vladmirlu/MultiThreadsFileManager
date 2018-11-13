@@ -1,11 +1,11 @@
-package com.multithreads.files_manager.management;
+package com.multithreads.manager.management;
 
-import com.multithreads.files_manager.management.constants.*;
-import com.multithreads.files_manager.management.exception.InvalidCommandException;
-import com.multithreads.files_manager.management.file_workers.FileMerger;
-import com.multithreads.files_manager.management.file_workers.FileService;
-import com.multithreads.files_manager.management.file_workers.FileSplitter;
-import com.multithreads.files_manager.statistics.StatisticService;
+import com.multithreads.manager.management.constants.*;
+import com.multithreads.manager.management.exception.InvalidCommandException;
+import com.multithreads.manager.management.workers.FileMerger;
+import com.multithreads.manager.management.workers.FileService;
+import com.multithreads.manager.management.workers.FileSplitter;
+import com.multithreads.manager.statistics.StatisticService;
 import org.apache.log4j.Logger;
 
 import java.util.Scanner;

@@ -1,7 +1,8 @@
-package com.multithreads.files_manager.management.file_workers;
+package com.multithreads.manager.management.workers;
 
-import com.multithreads.files_manager.management.model.FilesDTO;
-import com.multithreads.files_manager.statistics.StatisticService;
+import com.multithreads.manager.management.constants.FileSizeUnit;
+import com.multithreads.manager.management.model.FilesDTO;
+import com.multithreads.manager.statistics.StatisticService;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -43,9 +44,9 @@ public class FileFillTask implements Callable {
         final String threadName = Thread.currentThread().getName();
         logger.info("FileFillTask started." + this);
         try {
-            final int bufferSize = FileCreator.BUFFER_SIZE;
-            long alreadyRead = 0;
             long fileLength = filesDTO.getFileWriteLength();
+            final long bufferSize = fileLength <= filesDTO.getFileToRead().length() ? FileSizeUnit.getSpecificBufferSize(fileLength) : FileSizeUnit.getSpecificBufferSize(filesDTO.getFileToRead().length());
+            long alreadyRead = 0;
             while (fileToRead.getFilePointer() - filesDTO.getFileToReadOffset() < fileLength) {
 
                 if (bufferSize >= fileLength) {
@@ -62,7 +63,6 @@ public class FileFillTask implements Callable {
                     statisticService.trackTaskProcess(bufferSize, threadName, alreadyRead, time);
                 }
             }
-
             return filesDTO.getFileToWrite();
         } catch (IOException ex) {
             throw new RuntimeException(ex.getMessage());

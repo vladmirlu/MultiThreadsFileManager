@@ -1,8 +1,9 @@
-package com.multithreads.files_manager.statistics;
+package com.multithreads.manager.statistics;
 
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +27,7 @@ public class StatisticService {
     private final ExecutorService statisticsPool = Executors.newFixedThreadPool(1);
 
     /**
-     * Interface for interaction with the src.main.com.multithreads.files_manager.statistics module.
+     * Interface for interaction with the src.main.com.multithreads.manager.statistics module.
      */
     private TaskTracker taskTracker;
     /**
@@ -49,9 +50,9 @@ public class StatisticService {
      * @param reports map of section and corresponding task report
      * @return progress for each section
      */
-    public Map<String, Integer> calculateTaskProgress(final Map<String, TaskReport> reports) {
+    public Map<String, Integer> calculateTasksProgress(final Map<String, TaskReport> reports) {
         Map<String, Integer> unitProgress = new HashMap<>();
-        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
+        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompletedTasks(), report.getTotalTasks())));
 
         return unitProgress;
     }
@@ -75,25 +76,30 @@ public class StatisticService {
         return taskTracker;
     }
 
-    public void trackTaskProcess(long length, String threadName, long alreadyRead, long time){
+    public void trackTaskProcess(long tasksBuffer, String threadName, long alreadyRead, long time){
 
-            taskTracker.addCompletedTasks(length);
-            taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, length, length, time));
-            taskTracker.setBufferTasks(length);
+            taskTracker.addCompletedTasks(tasksBuffer);
+            taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, tasksBuffer, tasksBuffer, time));
+            taskTracker.setTasksBuffer(tasksBuffer);
             taskTracker.setBufferTimeNanoSec(time);
-
     }
 
-    public void getTaskTracking(){
+    public String getTaskTracking(){
+        StringBuilder builder = new StringBuilder();
         try {
-            Future<TaskTracker> future = statisticsPool.submit(new ProcessPrinter(taskTracker, this), taskTracker);
-                future.get();
+            Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(taskTracker, this, logger));
+            Iterator entries = future.get().entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                builder.append("\nKey = ").append(entry.getKey()).append(", Value = ").append(entry.getValue());
+            }
         } catch (ExecutionException e){
             e.printStackTrace();
         }catch (InterruptedException i){
             i.printStackTrace();
         }
         taskTracker = resetTaskTracker();
+        return builder.toString();
     }
 
     public ExecutorService getStatisticsPool() {

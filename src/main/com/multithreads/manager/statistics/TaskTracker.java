@@ -1,23 +1,28 @@
-package com.multithreads.files_manager.statistics;
+package com.multithreads.manager.statistics;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Tool for interaction with the src.main.com.multithreads.files_manager.statistics module.
+ * Tool for interaction with the src.main.com.multithreads.manager.statistics module.
  */
 public class TaskTracker {
 
     /**
      * Report about completed and total tasks.
      */
-    private TaskReport taskReport = new TaskReport(0, 0, 0, 0);
+    private final TaskReport taskReport;
 
     /**
      * Map of section and corresponding task report.
      */
-    private Map<String, TaskReport> reportsPerSection = new HashMap<>();
+    private final Map<String, TaskReport> reportsPerSection ;
 
+
+    TaskTracker(){
+        reportsPerSection = new HashMap<>();
+        taskReport = new TaskReport(0, 0, 0, 0);
+    }
 
     /**
      * Adds completed tasks.
@@ -25,7 +30,7 @@ public class TaskTracker {
      * @param completedTasks completed tasks
      */
 
-    public synchronized void addCompletedTasks(final long completedTasks) {
+    public synchronized void addCompletedTasks(long completedTasks) {
         taskReport.addCompletedTasks(completedTasks);
     }
 
@@ -36,7 +41,7 @@ public class TaskTracker {
      * @param taskReport report about completed and total tasks
      */
 
-    public synchronized void addReportPerSection(final String name, final TaskReport taskReport) {
+    public synchronized void addReportPerSection(String name, TaskReport taskReport) {
         this.reportsPerSection.put(name, taskReport);
     }
 
@@ -45,8 +50,8 @@ public class TaskTracker {
      *
      * @param totalTasks total tasks
      */
-    public synchronized void setTotalTasks(final long totalTasks) {
-        taskReport.setTotal(totalTasks);
+    public synchronized void setTotalTasks(long totalTasks) {
+        taskReport.setTotalTasks(totalTasks);
     }
 
     /**
@@ -54,8 +59,8 @@ public class TaskTracker {
      *
      * @param completedTasks completed tasks
      */
-    public synchronized void setCompletedTasks(final long completedTasks) {
-        taskReport.setCompleted(completedTasks);
+    public synchronized void setCompletedTasks(long completedTasks) {
+        taskReport.setCompletedTasks(completedTasks);
     }
 
     /**
@@ -64,7 +69,7 @@ public class TaskTracker {
      * @return completed tasks
      */
     public synchronized long getCompletedTasks() {
-        return taskReport.getCompleted();
+        return taskReport.getCompletedTasks();
     }
 
     /**
@@ -74,7 +79,7 @@ public class TaskTracker {
      */
 
     public synchronized long getTotalTasks() {
-        return taskReport.getTotal();
+        return taskReport.getTotalTasks();
     }
 
     /**
@@ -91,7 +96,7 @@ public class TaskTracker {
      *
      * @param buffer buffer of tasks
      */
-    public synchronized void setBufferTasks(final long buffer) {
+    public synchronized void setTasksBuffer(long buffer) {
         taskReport.setBuffer(buffer);
     }
 
@@ -101,7 +106,7 @@ public class TaskTracker {
      * @param time time in nanoseconds
      */
 
-    public synchronized void setBufferTimeNanoSec(final long time) {
+    public synchronized void setBufferTimeNanoSec(long time) {
         taskReport.setTimeNanoSec(time);
     }
 

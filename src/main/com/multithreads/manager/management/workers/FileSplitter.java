@@ -1,7 +1,6 @@
-package com.multithreads.files_manager.management.file_workers;
+package com.multithreads.manager.management.workers;
 
-import com.multithreads.files_manager.management.model.FilesDTO;
-import com.multithreads.files_manager.statistics.StatisticService;
+import com.multithreads.manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -57,7 +56,7 @@ public class FileSplitter {
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
-        statisticService.getTaskTracking();
+        System.out.println(statisticService.getTaskTracking());
         return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
     }
 }

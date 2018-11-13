@@ -1,8 +1,6 @@
-package com.multithreads.files_manager.management.model;
+package com.multithreads.manager.management.model;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 
 public class FilesDTO {
 

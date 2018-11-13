@@ -1,5 +1,6 @@
-package com.multithreads.files_manager.management.file_workers;
+package com.multithreads.manager.management.workers;
 
+import com.multithreads.manager.management.constants.FileSizeUnit;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -50,10 +51,6 @@ public class FileCreator {
         logger.error("Error! File " + filePath + " not found");
         throw new FileNotFoundException();
     }
-    /**
-     * Buffer size.
-     */
-    public static final int BUFFER_SIZE = 8 * 1024;
 
     /**
      * Name of the file that will be created after merging.
@@ -74,11 +71,11 @@ public class FileCreator {
         long restToRead = size;
 
         while (randomAccessFile.length() < size) {
-            if (restToRead <= BUFFER_SIZE) {
+            if (restToRead <= FileSizeUnit.BUFFER_SIZE) {
                 randomAccessFile.write(new byte[(int) restToRead]);
             } else {
-                randomAccessFile.write(new byte[(int) BUFFER_SIZE]);
-                restToRead = restToRead - BUFFER_SIZE;
+                randomAccessFile.write(new byte[ FileSizeUnit.BUFFER_SIZE]);
+                restToRead = restToRead - FileSizeUnit.BUFFER_SIZE;
             }
         }
         randomAccessFile.close();

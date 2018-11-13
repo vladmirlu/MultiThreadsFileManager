@@ -1,7 +1,7 @@
-package com.multithreads.files_manager.management.file_workers;
+package com.multithreads.manager.management.workers;
 
-import com.multithreads.files_manager.management.model.FilesDTO;
-import com.multithreads.files_manager.statistics.StatisticService;
+import com.multithreads.manager.management.model.FilesDTO;
+import com.multithreads.manager.statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
