@@ -1,84 +1,52 @@
 package com.multithreads.manager.statistics;
 
 /**
- * Report about completedTasks and totalTasks tasks.
+ * Report about completed and total tasks.
  */
 public class TaskReport {
 
-    /**
-     * Number of completedTasks tasks.
-     */
-    private long completedTasks;
+
+    private long completed;
+
+
+    private long total;
 
     /**
-     * Number of totalTasks tasks.
-     */
-    private long totalTasks;
-
-    /**
-     * Buffer of tasks.
-     */
-    private long buffer;
-
-    /**
-     * Time to do buffer tasks (in nanoseconds).
-     */
-    private long timeNanoSec;
-
-    /**
-     * Initializes completedTasks and totalTasks tasks fields.
+     * Initializes completed and total tasks fields.
      *
-     * @param completedTasks completedTasks tasks
-     * @param totalTasks totalTasks tasks
+     * @param completed completed tasks
+     * @param total total tasks
      */
-    public TaskReport(long completedTasks, long totalTasks, long buffer, long timeNanoSec) {
-        this.completedTasks = completedTasks;
-        this.totalTasks = totalTasks;
-        this.buffer = buffer;
-        this.timeNanoSec = timeNanoSec;
+    public TaskReport(long completed, long total) {
+        this.completed = completed;
+        this.total = total;
     }
 
-    public long getCompletedTasks() {
-        return completedTasks;
+    public long getCompleted() {
+        return completed;
     }
 
-    public long getTotalTasks() {
-        return totalTasks;
+    public long getTotal() {
+        return total;
     }
 
-    public long getBuffer() {
-        return buffer;
+    public void setCompleted(long completed) {
+        this.completed = completed;
     }
 
-    public void setBuffer(long buffer) {
-        this.buffer = buffer;
-    }
-
-    public long getTimeNanoSec() {
-        return timeNanoSec;
-    }
-
-    public void setTimeNanoSec(long timeNanoSec) {
-        this.timeNanoSec = timeNanoSec;
-    }
-
-    public void setCompletedTasks(long completedTasks) {
-        this.completedTasks = completedTasks;
-    }
-
-    public void setTotalTasks(long totalTasks) {
-        this.totalTasks = totalTasks;
+    public void setTotal(long total) {
+        this.total = total;
     }
 
     public void addCompletedTasks(long completed) {
-        this.completedTasks = this.completedTasks + completed;
+        this.completed = this.completed + completed;
     }
 
     @Override
     public String toString() {
         return "TaskReport{" +
-                "completedTasks=" + completedTasks +
-                ", totalTasks=" + totalTasks +
+                "completed=" + completed +
+                ", total=" + total +
                 '}';
     }
 }

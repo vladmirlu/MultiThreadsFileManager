@@ -47,22 +47,21 @@ public class FileFillTask implements Callable {
             logger.info("FileFillTask started." + this);
             long fileToWriteLength = filesDTO.getFileWriteLength();
             final long bufferSize = fileToWriteLength <= filesDTO.getFileToRead().length() ? FileSizeUnit.getSpecificBufferSize(fileToWriteLength) : FileSizeUnit.getSpecificBufferSize(filesDTO.getFileToRead().length());
-            long alreadyRead = 0;
+            long completed = 0;
+            long time;
             while (fileToRead.getFilePointer() - filesDTO.getFileToReadOffset() < fileToWriteLength) {
 
                 if (bufferSize >= fileToWriteLength) {
                     logger.debug("Buffer Size >= File to write length . FilePointer: " + fileToRead.getFilePointer() + this);
-                    long time = copyFileAndGetSpentTime(fileToRead, fileToWrite, fileToWriteLength);
-                    alreadyRead += fileToWriteLength;
-                    statisticService.trackTaskProcess(fileToWriteLength, threadName, alreadyRead, time);
-
+                    time = copyFileAndGetSpentTime(fileToRead, fileToWrite, fileToWriteLength);
+                    completed += fileToWriteLength;
                 } else {
                     logger.debug("Buffer Size < File to write length. FilePointer: " + fileToRead.getFilePointer() + this);
-                    long time = copyFileAndGetSpentTime(fileToRead, fileToWrite, bufferSize);
+                    time = copyFileAndGetSpentTime(fileToRead, fileToWrite, bufferSize);
                     fileToWriteLength -= bufferSize;
-                    alreadyRead += bufferSize;
-                    statisticService.trackTaskProcess(bufferSize, threadName, alreadyRead, time);
+                    completed += bufferSize;
                 }
+                statisticService.trackTaskProcess(fileToWriteLength, threadName, completed, time);
             }
 
             return filesDTO.getFileToWrite();

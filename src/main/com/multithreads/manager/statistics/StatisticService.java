@@ -49,7 +49,7 @@ public class StatisticService {
      */
     public Map<String, Integer> calculateTasksProgress(final Map<String, TaskReport> reports) {
         Map<String, Integer> unitProgress = new HashMap<>();
-        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompletedTasks(), report.getTotalTasks())));
+        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
 
         return unitProgress;
     }
@@ -71,8 +71,8 @@ public class StatisticService {
         return tasksTracker;
     }
 
-    public void trackTaskProcess(long tasksBuffer, String threadName, long alreadyRead long time){
-        tasksTracker.addReportPerSection(tasksBuffer, threadName, alreadyRead, time);
+    public void trackTaskProcess(long tasksBuffer, String threadName, long completed, long time){
+        tasksTracker.addReportPerSection(tasksBuffer, threadName, completed, time);
         statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger));
     }
 
