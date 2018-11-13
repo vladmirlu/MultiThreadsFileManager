@@ -53,7 +53,7 @@ public class Communicator {
                     openConsole();
                 case MERGE:
                     System.out.println("Input please the directory path to merge all files from there:");
-                    System.out.println(fileMerger.merge(scanner.nextLine()).hashCode());
+                    System.out.println(fileMerger.merge(scanner.nextLine()).size());
                     openConsole();
                 case EXIT:
                     System.out.println("good bye");

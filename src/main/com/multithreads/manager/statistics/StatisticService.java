@@ -3,12 +3,9 @@ package com.multithreads.manager.statistics;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Statistics service.
@@ -19,7 +16,7 @@ public class StatisticService {
 
     public StatisticService(Logger logger){
         this.logger = logger;
-        this.taskTracker  = new TaskTracker();
+        this.tasksTracker = new TasksTracker();
     }
     /**
      * Statistics thread pool.
@@ -29,7 +26,7 @@ public class StatisticService {
     /**
      * Interface for interaction with the src.main.com.multithreads.manager.statistics module.
      */
-    private TaskTracker taskTracker;
+    private TasksTracker tasksTracker;
     /**
      * Calculates progress in percentage.
      *
@@ -37,7 +34,7 @@ public class StatisticService {
      * @param allTasks       number of total tasks
      * @return progress
      */
-    public int calculateProgress(final long completedTasks, final long allTasks) {
+    public int calculateProgress(long completedTasks, long allTasks) {
         double semiRes = (double) completedTasks / ((double) allTasks) * 100;
         long result = Math.round(semiRes);
 
@@ -69,25 +66,20 @@ public class StatisticService {
         return ((tasksLeft * bufferTimeNanoSec) / bufferTasks) / 1000000;
     }
 
-    public TaskTracker resetTaskTracker(){
-        taskTracker.setTotalTasks(0);
-        taskTracker.setCompletedTasks(0);
-        taskTracker.getReportsPerSection().clear();
-        return taskTracker;
+    public TasksTracker resetTaskTracker(){
+        tasksTracker.resetTracker();
+        return tasksTracker;
     }
 
-    public void trackTaskProcess(long tasksBuffer, String threadName, long alreadyRead, long time){
-
-            taskTracker.addCompletedTasks(tasksBuffer);
-            taskTracker.addReportPerSection(threadName, new TaskReport(alreadyRead, tasksBuffer, tasksBuffer, time));
-            taskTracker.setTasksBuffer(tasksBuffer);
-            taskTracker.setBufferTimeNanoSec(time);
+    public void trackTaskProcess(long tasksBuffer, String threadName, long alreadyRead long time){
+        tasksTracker.addReportPerSection(tasksBuffer, threadName, alreadyRead, time);
+        statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger));
     }
 
-    public String getTaskTracking(){
+    /*public String getTaskTracking(){
         StringBuilder builder = new StringBuilder();
         try {
-            Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(taskTracker, this, logger));
+            Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger));
             Iterator entries = future.get().entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
@@ -98,9 +90,9 @@ public class StatisticService {
         }catch (InterruptedException i){
             i.printStackTrace();
         }
-        taskTracker = resetTaskTracker();
+        //tasksTracker = resetTaskTracker();
         return builder.toString();
-    }
+    }*/
 
     public ExecutorService getStatisticsPool() {
         return statisticsPool;

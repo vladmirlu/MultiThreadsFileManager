@@ -36,7 +36,7 @@ public class FileSplitter {
      * @throws InterruptedException    in case of thread interrupting
      * @throws IOException             if an I/O error occurs
      */
-    public List<File> split(String filePath, String partFileSize) throws IOException{
+    public List <Future<File>> split(String filePath, String partFileSize) throws IOException{
 
         File file = fileService.getFileCreator().getFile(filePath);
         System.out.println(file.hashCode());
@@ -56,7 +56,7 @@ public class FileSplitter {
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }
-        System.out.println(statisticService.getTaskTracking());
-        return  futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
+        return  futures;
+        /*futures.stream().map(future -> { try { return future.get(); } catch (InterruptedException | ExecutionException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());*/
     }
 }

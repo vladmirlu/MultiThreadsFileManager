@@ -41,28 +41,30 @@ public class FileFillTask implements Callable {
     @Override
     public File call() {
 
-        final String threadName = Thread.currentThread().getName();
-        logger.info("FileFillTask started." + this);
+        statisticService.resetTaskTracker();
         try {
-            long fileLength = filesDTO.getFileWriteLength();
-            final long bufferSize = fileLength <= filesDTO.getFileToRead().length() ? FileSizeUnit.getSpecificBufferSize(fileLength) : FileSizeUnit.getSpecificBufferSize(filesDTO.getFileToRead().length());
+            final String threadName = Thread.currentThread().getName();
+            logger.info("FileFillTask started." + this);
+            long fileToWriteLength = filesDTO.getFileWriteLength();
+            final long bufferSize = fileToWriteLength <= filesDTO.getFileToRead().length() ? FileSizeUnit.getSpecificBufferSize(fileToWriteLength) : FileSizeUnit.getSpecificBufferSize(filesDTO.getFileToRead().length());
             long alreadyRead = 0;
-            while (fileToRead.getFilePointer() - filesDTO.getFileToReadOffset() < fileLength) {
+            while (fileToRead.getFilePointer() - filesDTO.getFileToReadOffset() < fileToWriteLength) {
 
-                if (bufferSize >= fileLength) {
+                if (bufferSize >= fileToWriteLength) {
                     logger.debug("Buffer Size >= File to write length . FilePointer: " + fileToRead.getFilePointer() + this);
-                    long time = copyFileAndGetSpentTime(fileToRead, fileToWrite, fileLength);
-                    alreadyRead += fileLength;
-                    statisticService.trackTaskProcess(fileLength, threadName, alreadyRead, time);
+                    long time = copyFileAndGetSpentTime(fileToRead, fileToWrite, fileToWriteLength);
+                    alreadyRead += fileToWriteLength;
+                    statisticService.trackTaskProcess(fileToWriteLength, threadName, alreadyRead, time);
 
                 } else {
                     logger.debug("Buffer Size < File to write length. FilePointer: " + fileToRead.getFilePointer() + this);
                     long time = copyFileAndGetSpentTime(fileToRead, fileToWrite, bufferSize);
-                    fileLength -= bufferSize;
+                    fileToWriteLength -= bufferSize;
                     alreadyRead += bufferSize;
                     statisticService.trackTaskProcess(bufferSize, threadName, alreadyRead, time);
                 }
             }
+
             return filesDTO.getFileToWrite();
         } catch (IOException ex) {
             throw new RuntimeException(ex.getMessage());

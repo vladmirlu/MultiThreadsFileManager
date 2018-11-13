@@ -6,12 +6,22 @@ import java.util.Map;
 /**
  * Tool for interaction with the src.main.com.multithreads.manager.statistics module.
  */
-public class TaskTracker {
+public class TasksTracker {
+
+    /**
+     * Number of completedTasks tasks.
+     */
+    private long completedTasks;
+
+    /**
+     * Number of totalTasks tasks.
+     */
+    private long totalTasks;
 
     /**
      * Report about completed and total tasks.
      */
-    private final TaskReport taskReport;
+    private TaskReport taskReport;
 
     /**
      * Map of section and corresponding task report.
@@ -19,48 +29,34 @@ public class TaskTracker {
     private final Map<String, TaskReport> reportsPerSection ;
 
 
-    TaskTracker(){
+    TasksTracker(){
         reportsPerSection = new HashMap<>();
-        taskReport = new TaskReport(0, 0, 0, 0);
-    }
+        taskReport = new TaskReport(0,0,0,0);
 
-    /**
-     * Adds completed tasks.
-     *
-     * @param completedTasks completed tasks
-     */
-
-    public synchronized void addCompletedTasks(long completedTasks) {
-        taskReport.addCompletedTasks(completedTasks);
     }
 
     /**
      * Adds map of section and corresponding task report.
      *
-     * @param name       name of the section
-     * @param taskReport report about completed and total tasks
+     * @param threadName       name of the section
      */
 
-    public synchronized void addReportPerSection(String name, TaskReport taskReport) {
-        this.reportsPerSection.put(name, taskReport);
+    public synchronized void addReportPerSection(long tasksBuffer, String threadName, long alreadyRead, long time) {
+
+        taskReport.addCompletedTasks(tasksBuffer);
+        taskReport.setBuffer(tasksBuffer);
+        taskReport.setTimeNanoSec(time);
+        this.reportsPerSection.put(threadName, new TaskReport(taskReport.getCompletedTasks(), taskReport.getTotalTasks(), ));
     }
 
     /**
      * Sets total tasks.
      *
-     * @param totalTasks total tasks
      */
-    public synchronized void setTotalTasks(long totalTasks) {
-        taskReport.setTotalTasks(totalTasks);
-    }
-
-    /**
-     * Sets completed tasks.
-     *
-     * @param completedTasks completed tasks
-     */
-    public synchronized void setCompletedTasks(long completedTasks) {
-        taskReport.setCompletedTasks(completedTasks);
+    public synchronized void resetTracker() {
+        taskReport.setTotalTasks(0);
+        taskReport.setCompletedTasks(0);
+        reportsPerSection.clear();
     }
 
     /**
@@ -89,25 +85,6 @@ public class TaskTracker {
      */
     public synchronized Map<String, TaskReport> getReportsPerSection() {
         return reportsPerSection;
-    }
-
-    /**
-     * Sets number of tasks in the buffer.
-     *
-     * @param buffer buffer of tasks
-     */
-    public synchronized void setTasksBuffer(long buffer) {
-        taskReport.setBuffer(buffer);
-    }
-
-    /**
-     * Sets time for buffer tasks.
-     *
-     * @param time time in nanoseconds
-     */
-
-    public synchronized void setBufferTimeNanoSec(long time) {
-        taskReport.setTimeNanoSec(time);
     }
 
     /**
