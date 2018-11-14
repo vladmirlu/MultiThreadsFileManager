@@ -35,9 +35,6 @@ public class TasksTracker {
         taskReport.addCompletedTasks(completed);
         //taskReport.addTotalTasks(total);
         taskReport.addTotalSpentTime(time);
-
-        System.out.println("completed = " + taskReport.getCompleted());
-        System.out.println("total = " + taskReport.getTotal());
         this.reportsPerSection.put(threadName, new TaskReport(completed, total, time));
     }
 
@@ -57,7 +54,7 @@ public class TasksTracker {
         reportsPerSection.clear();
     }
 
-    public TaskReport getTaskReport() {
+    public synchronized TaskReport getTaskReport() {
         return taskReport;
     }
 

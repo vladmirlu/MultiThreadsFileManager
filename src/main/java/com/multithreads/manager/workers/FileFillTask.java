@@ -63,7 +63,14 @@ public class FileFillTask implements Callable {
                 statisticService.trackTaskProcess(completed,  threadName,  filesDTO.getFileWriteLength(), time);
             }
 
+            /*try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e.getMessage());
+            }*/
+
             return filesDTO.getFileToWrite();
+
         } catch (IOException ex) {
             throw new RuntimeException(ex.getMessage());
         } finally {

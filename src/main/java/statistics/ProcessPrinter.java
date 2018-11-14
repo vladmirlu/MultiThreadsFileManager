@@ -43,11 +43,15 @@ public class ProcessPrinter implements Runnable{
         logger.trace("ProcessPrinter started." + this);
         int totalProgress = 0;
         while (totalProgress < 100) {
+
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e.getMessage());
             }
+
+            System.out.println("complated = " + tasksTracker.getTaskReport().getCompleted() + "; total = " + tasksTracker.getTaskReport().getTotal());
+
             totalProgress = statisticService.calculateProgress(tasksTracker.getTaskReport().getCompleted(), tasksTracker.getTaskReport().getTotal());
             System.out.println(buildProgress(totalProgress));
 
@@ -61,7 +65,9 @@ public class ProcessPrinter implements Runnable{
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
-        tasksTracker.getReportsPerSection().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ").append(statisticService.calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ").append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ms. "));
+        tasksTracker.getReportsPerSection().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
+                .append(statisticService.calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
+                .append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ms. "));
         progressBuilder.append("Total spent time: ").append(tasksTracker.getTaskReport().getSpentTimeNanoSec()).append("ms ");
         return progressBuilder.toString();
     }

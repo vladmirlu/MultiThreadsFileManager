@@ -45,7 +45,8 @@ public class StatisticService {
 
         tasksTracker.addReportPerSection(completed, threadName,  total, time);
         Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger), tasksTracker.getReportsPerSection());
-       // System.out.println(getTaskTracking(future));
+        if(future.isDone())
+        System.out.println(getTaskTracking(future));
     }
 
     public String getTaskTracking(Future<Map<String, TaskReport>> future){
