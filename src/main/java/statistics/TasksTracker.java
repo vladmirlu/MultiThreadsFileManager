@@ -1,10 +1,10 @@
-package com.multithreads.manager.statistics;
+package statistics;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Tool for interaction with the src.main.com.multithreads.manager.statistics module.
+ * Tool for interaction with the src.main.java.statistics module.
  */
 public class TasksTracker {
     /**

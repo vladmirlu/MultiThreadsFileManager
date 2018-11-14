@@ -1,8 +1,9 @@
-package com.multithreads.manager.management.workers;
+package com.multithreads.manager.workers;
 
-import com.multithreads.manager.management.constants.FileSizeUnit;
-import com.multithreads.manager.management.model.FilesDTO;
-import com.multithreads.manager.statistics.StatisticService;
+import com.multithreads.manager.constants.FileSizeUnit;
+import com.multithreads.manager.model.FilesDTO;
+import statistics.StatisticService;
+
 import org.apache.log4j.Logger;
 
 import java.io.*;

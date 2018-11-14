@@ -1,4 +1,4 @@
-package com.multithreads.manager.statistics;
+package statistics;
 
 /**
  * Report about completed and total tasks.

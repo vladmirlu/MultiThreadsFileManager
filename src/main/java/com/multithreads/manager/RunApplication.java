@@ -1,4 +1,4 @@
-package com.multithreads.manager.management;
+package com.multithreads.manager;
 
 import org.apache.log4j.Logger;
 

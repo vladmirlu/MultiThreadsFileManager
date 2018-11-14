@@ -1,14 +1,14 @@
-package com.multithreads.manager.statistics;
+package statistics;
 
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 
 /**
  * Statistics service.
@@ -27,7 +27,7 @@ public class StatisticService {
     private final ExecutorService statisticsPool = Executors.newFixedThreadPool(1);
 
     /**
-     * Interface for interaction with the src.main.com.multithreads.manager.statistics module.
+     * Interface for interaction with the src.main.java.statistics module.
      */
     private TasksTracker tasksTracker;
     /**

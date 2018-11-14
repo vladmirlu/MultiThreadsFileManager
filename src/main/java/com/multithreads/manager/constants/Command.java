@@ -1,6 +1,6 @@
-package com.multithreads.manager.management.constants;
+package com.multithreads.manager.constants;
 
-import com.multithreads.manager.management.exception.InvalidCommandException;
+import com.multithreads.manager.exception.InvalidCommandException;
 
 /**
  * Available commands.
@@ -35,7 +35,7 @@ public enum Command {
         return message;
     }
 
-    public static Command getCommand(String symbol) throws InvalidCommandException{
+    public static Command getCommand(String symbol) throws InvalidCommandException {
         for(Command command: values()){
             if (symbol.equalsIgnoreCase(command.symbol)){
                 return command;

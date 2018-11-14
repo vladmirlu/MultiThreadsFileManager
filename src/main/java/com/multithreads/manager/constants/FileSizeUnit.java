@@ -1,4 +1,4 @@
-package com.multithreads.manager.management.constants;
+package com.multithreads.manager.constants;
 
 /**
  * Available size units (size types)
@@ -23,13 +23,7 @@ public enum FileSizeUnit {
     /**
      * Megabyte.
      */
-    GIGABYTE(1000000000),
-
-    /**
-     * Terabyte.
-     */
-    TERABYTE(Long.valueOf("1000000000000"));
-
+    GIGABYTE(1000000000);
 
     /**
      * Coefficient for converting into bytes.
@@ -39,7 +33,7 @@ public enum FileSizeUnit {
     /**
      * Buffer size.
      */
-    public static final int BUFFER_SIZE = 8 * 1024;
+    public static final int BUFFER_SIZE = 1024 * 8;
 
     /**
      * Initializes coefficient.
@@ -57,6 +51,6 @@ public enum FileSizeUnit {
                 sizeUnit = fileSizeUnit;
             }
         }
-        return 8 * sizeUnit.coefficient;
+        return BUFFER_SIZE * sizeUnit.coefficient;
     }
 }

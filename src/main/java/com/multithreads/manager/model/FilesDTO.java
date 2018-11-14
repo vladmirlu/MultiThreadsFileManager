@@ -1,4 +1,4 @@
-package com.multithreads.manager.management.model;
+package com.multithreads.manager.model;
 
 import java.io.File;
 

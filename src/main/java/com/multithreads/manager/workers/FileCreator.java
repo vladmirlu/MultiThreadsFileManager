@@ -1,6 +1,6 @@
-package com.multithreads.manager.management.workers;
+package com.multithreads.manager.workers;
 
-import com.multithreads.manager.management.constants.FileSizeUnit;
+import com.multithreads.manager.constants.FileSizeUnit;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -79,7 +79,6 @@ public class FileCreator {
             }
         }
         randomAccessFile.close();
-
         return file;
     }
 

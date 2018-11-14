@@ -1,4 +1,4 @@
-package com.multithreads.manager.management.exception;
+package com.multithreads.manager.exception;
 
 /**
  * Exception that is thrown in case of constants invalidity.

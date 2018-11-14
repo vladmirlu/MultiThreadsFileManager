@@ -1,19 +1,17 @@
-package com.multithreads.manager.management;
+package com.multithreads.manager;
 
-import com.multithreads.manager.management.constants.*;
-import com.multithreads.manager.management.exception.InvalidCommandException;
-import com.multithreads.manager.management.workers.FileMerger;
-import com.multithreads.manager.management.workers.FileService;
-import com.multithreads.manager.management.workers.FileSplitter;
-import com.multithreads.manager.statistics.StatisticService;
+import com.multithreads.manager.constants.Command;
+import com.multithreads.manager.exception.InvalidCommandException;
+import com.multithreads.manager.workers.FileMerger;
+import com.multithreads.manager.workers.FileService;
+import com.multithreads.manager.workers.FileSplitter;
+import statistics.StatisticService;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * Tool for interaction with user.

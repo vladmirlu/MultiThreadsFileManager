@@ -1,4 +1,4 @@
-package com.multithreads.manager.statistics;
+package statistics;
 
 import org.apache.log4j.Logger;
 
@@ -18,7 +18,7 @@ public class ProcessPrinter implements Runnable{
     private final StatisticService statisticService;
 
     /**
-     * Tool for interaction with the src.main.com.multithreads.manager.statistics module.
+     * Tool for interaction with the src.main.java.statistics module.
      */
     private TasksTracker tasksTracker;
 
@@ -26,7 +26,7 @@ public class ProcessPrinter implements Runnable{
     /**
      * Initializes tasksTracker and constants fields.
      *
-     * @param tasksTracker tool for interaction with the src.main.com.multithreads.manager.statistics module
+     * @param tasksTracker tool for interaction with the src.main.java.statistics module
      */
     public ProcessPrinter(TasksTracker tasksTracker, StatisticService statisticService, Logger logger ) {
         this.tasksTracker = tasksTracker;

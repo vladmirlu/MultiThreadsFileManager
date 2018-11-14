@@ -1,6 +1,6 @@
-package com.multithreads.manager.management.workers;
+package com.multithreads.manager.workers;
 
-import com.multithreads.manager.statistics.StatisticService;
+import statistics.StatisticService;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;

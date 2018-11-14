@@ -1,7 +1,8 @@
-package com.multithreads.manager.management.workers;
+package com.multithreads.manager.workers;
 
-import com.multithreads.manager.management.model.FilesDTO;
-import com.multithreads.manager.statistics.StatisticService;
+import com.multithreads.manager.model.FilesDTO;
+import statistics.StatisticService;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -44,7 +45,7 @@ public class FileService {
 
     public File createOriginalFile(List<File> files) throws IOException {
         long totalSize = fileCreator.calculateTotalSize(files);
-        String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "." + FilenameUtils.getExtension(files.get(0).getName());
+        String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "" + FilenameUtils.getExtension(files.get(0).getName());
         return fileCreator.createFile(originalFilePath, totalSize);
     }
 
