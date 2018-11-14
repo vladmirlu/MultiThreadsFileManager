@@ -47,12 +47,12 @@ public class StatisticService {
      * @param reports map of section and corresponding task report
      * @return progress for each section
      */
-    public Map<String, Integer> calculateTasksProgress(final Map<String, TaskReport> reports) {
+   /* public Map<String, Integer> calculateTasksProgress(final Map<String, TaskReport> reports) {
         Map<String, Integer> unitProgress = new HashMap<>();
         reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
 
         return unitProgress;
-    }
+    }*/
 
     /**
      * Calculates time remaining.
@@ -62,14 +62,9 @@ public class StatisticService {
      * @param tasksLeft    remaining tasks
      * @return time remaining
      */
-    public long getCountTimeLeft(long bufferTasks, long bufferTimeNanoSec, long tasksLeft) {
+   /* public long getCountTimeLeft(long bufferTasks, long bufferTimeNanoSec, long tasksLeft) {
         return ((tasksLeft * bufferTimeNanoSec) / bufferTasks) / 1000000;
-    }
-
-    public TasksTracker resetTaskTracker(){
-        tasksTracker.resetTracker();
-        return tasksTracker;
-    }
+    }*/
 
     public void trackTaskProcess(long fileToWriteLength, String threadName, long completed, long total, long time){
         tasksTracker.addReportPerSection(fileToWriteLength, threadName, completed, total, time);

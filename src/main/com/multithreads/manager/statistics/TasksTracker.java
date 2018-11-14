@@ -22,7 +22,7 @@ public class TasksTracker {
 
     TasksTracker(){
         reportsPerSection = new HashMap<>();
-        taskReport = new TaskReport(0,0);
+        taskReport = new TaskReport(0,0, 0);
         bufferTime = new BufferTime(0,0);
 
     }
@@ -37,9 +37,8 @@ public class TasksTracker {
 
         taskReport.addCompletedTasks(toWriteLength);
         taskReport.addTotalTasks(total);
-        bufferTime.setBuffer(toWriteLength);
-        bufferTime.setTimeNanoSec(time);
-        this.reportsPerSection.put(threadName, new TaskReport(completed, total));
+        taskReport.addTotalSpentTime(total);
+        this.reportsPerSection.put(threadName, new TaskReport(completed, total, time));
     }
 
     /**
@@ -52,23 +51,8 @@ public class TasksTracker {
         reportsPerSection.clear();
     }
 
-    /**
-     * Gets completed tasks.
-     *
-     * @return completed tasks
-     */
-    public synchronized long getCompletedTasks() {
-        return taskReport.getCompleted();
-    }
-
-    /**
-     * Gets total tasks.
-     *
-     * @return total tasks
-     */
-
-    public synchronized long getTotalTasks() {
-        return taskReport.getTotal();
+    public TaskReport getTaskReport() {
+        return taskReport;
     }
 
     /**
@@ -80,24 +64,5 @@ public class TasksTracker {
         return reportsPerSection;
     }
 
-    /**
-     * Gets number of tasks in the buffer.
-     *
-     * @return number of tasks in the buffer
-     */
-
-    public synchronized long getBufferTasks() {
-        return bufferTime.getBuffer();
-    }
-
-    /**
-     * Gets time for buffer tasks.
-     *
-     * @return time in nanoseconds
-     */
-
-    public synchronized long getBufferTimeNanoSec() {
-        return bufferTime.getTimeNanoSec();
-    }
 
 }

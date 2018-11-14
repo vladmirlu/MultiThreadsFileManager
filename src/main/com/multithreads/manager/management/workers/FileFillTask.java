@@ -40,8 +40,6 @@ public class FileFillTask implements Callable {
      */
     @Override
     public File call() {
-
-        statisticService.resetTaskTracker();
         try {
             final String threadName = Thread.currentThread().getName();
             logger.info("FileFillTask started." + this);

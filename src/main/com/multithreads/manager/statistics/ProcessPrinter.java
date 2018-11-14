@@ -51,11 +51,12 @@ public class ProcessPrinter implements Runnable{
                 throw new RuntimeException(e.getMessage());
             }
 
-            long completed = tasksTracker.getCompletedTasks();
-            long total = tasksTracker.getTotalTasks();
-            totalProgress = statisticService.calculateProgress(completed, total);
+            long completed = tasksTracker.getTaskReport().getCompleted();
+            System.out.println("completed" + completed);
+            long total = tasksTracker.getTaskReport().getTotal();
+            System.out.println("total" + total);
 
-            System.out.println("totalProgress" + totalProgress);
+            totalProgress = statisticService.calculateProgress(completed, total);
             System.out.println(buildProgress(completed, total, totalProgress));
 
             logger.trace("Printed progress." + this);
@@ -66,14 +67,14 @@ public class ProcessPrinter implements Runnable{
 
     String buildProgress(Long completed, Long total, Integer totalProgress){
 
-        long timeLeft = statisticService.getCountTimeLeft(tasksTracker.getBufferTasks(), tasksTracker.getBufferTimeNanoSec(), total - completed);
-        Map<String, Integer> taskProgress = statisticService.calculateTasksProgress(tasksTracker.getReportsPerSection());
-        logger.debug("Completed tasks: " + completed + "." + "Total tasks: " + total + "." + "Total progress: " + totalProgress + "." + "Time remaining: " + timeLeft + "." + "Progress per section: " + taskProgress + this);
+        /*long timeLeft = statisticService.getCountTimeLeft(tasksTracker.getBufferTasks(), tasksTracker.getBufferTimeNanoSec(), total - completed);*/
+        /*Map<String, Integer> taskProgress = statisticService.calculateTasksProgress(tasksTracker.getReportsPerSection());*/
+        /*logger.debug("Completed tasks: " + completed + "." + "Total tasks: " + total + "." + "Total progress: " + totalProgress + "." + "Time remaining: " + timeLeft + "." + "Progress per section: " + taskProgress + this);*/
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
-        taskProgress.forEach((threadName, percent) -> progressBuilder.append(threadName).append(": ").append(percent).append("%, "));
-        progressBuilder.append("Time remaining: ").append(timeLeft).append("ms");
+        tasksTracker.getReportsPerSection().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ").append(statisticService.calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ").append("Spent time: ").append(taskReport.getTimeNanoSec()).append("ms. "));
+        progressBuilder.append("Total spent time: ").append(tasksTracker.getTaskReport().getTimeNanoSec()).append("ms ");
         return progressBuilder.toString();
     }
 }

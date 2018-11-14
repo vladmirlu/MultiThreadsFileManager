@@ -10,14 +10,28 @@ public class TaskReport {
     private long total;
 
     /**
+     * Time to do buffer tasks (in nanoseconds).
+     */
+    private long timeNanoSec;
+
+    /**
      * Initializes completed and total tasks fields.
      *
      * @param completed completed tasks
      * @param total total tasks
      */
-    public TaskReport(long completed, long total) {
+    public TaskReport(long completed, long total, long timeNanoSec) {
         this.completed = completed;
         this.total = total;
+        this.timeNanoSec = timeNanoSec;
+    }
+
+    public long getTimeNanoSec() {
+        return timeNanoSec;
+    }
+
+    public void setTimeNanoSec(long timeNanoSec) {
+        this.timeNanoSec = timeNanoSec;
     }
 
     public long getCompleted() {
@@ -44,6 +58,9 @@ public class TaskReport {
         this.total += total;
     }
 
+    public void addTotalSpentTime(long total){
+        this.total += total;
+    }
     @Override
     public String toString() {
         return "TaskReport{" +
