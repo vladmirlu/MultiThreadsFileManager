@@ -33,7 +33,7 @@ public enum FileSizeUnit {
     /**
      * Buffer size.
      */
-    public static final int BUFFER_SIZE = 1024 * 8;
+    public static final int BUFFER_SIZE =  8 * 1024;
 
     /**
      * Initializes coefficient.

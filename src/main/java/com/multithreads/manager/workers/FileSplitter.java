@@ -47,12 +47,12 @@ public class FileSplitter {
 
         Files.createDirectory(Paths.get(file.getParent() + "/split"));
         for (long i = 0; i < partsQuantity; i++) {
-            File partFile = new File(file.getParent() + "/split/" + i + "" + FilenameUtils.getExtension(file.getName()));
+            File partFile = new File(file.getParent() + "/split/" + i + "." + FilenameUtils.getExtension(file.getName()));
             Future<File> f = fileService.getWorkerFuture(file, splitFileLength,i * splitFileLength, 0, partFile, statisticService);
             futures.add(f);
         }
         if (bytesLeftAmount > 0) {
-            File partFile = new File(file.getParent() + "/split/" + partsQuantity + "" + FilenameUtils.getExtension(file.getName()));
+            File partFile = new File(file.getParent() + "/split/" + partsQuantity + "." + FilenameUtils.getExtension(file.getName()));
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount,file.length() - bytesLeftAmount,0, partFile, statisticService);
             futures.add(f);
         }

@@ -45,7 +45,7 @@ public class FileService {
 
     public File createOriginalFile(List<File> files) throws IOException {
         long totalSize = fileCreator.calculateTotalSize(files);
-        String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "" + FilenameUtils.getExtension(files.get(0).getName());
+        String originalFilePath = files.get(0).getParent() + "/" + FileCreator.SOURCE_FILENAME + "." + FilenameUtils.getExtension(files.get(0).getName());
         return fileCreator.createFile(originalFilePath, totalSize);
     }
 

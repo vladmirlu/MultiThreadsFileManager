@@ -46,6 +46,7 @@ public class TasksTracker {
      *
      */
     public synchronized void setTotalOfTask(long total){
+        resetTracker();
        taskReport.setTotal(total);
     }
 
