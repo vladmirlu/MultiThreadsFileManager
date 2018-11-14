@@ -5,9 +5,7 @@ package com.multithreads.manager.statistics;
  */
 public class TaskReport {
 
-
     private long completed;
-
 
     private long total;
 

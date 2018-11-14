@@ -71,8 +71,8 @@ public class StatisticService {
         return tasksTracker;
     }
 
-    public void trackTaskProcess(long tasksBuffer, String threadName, long completed, long time){
-        tasksTracker.addReportPerSection(tasksBuffer, threadName, completed, time);
+    public void trackTaskProcess(long fileToWriteLength, String threadName, long completed, long time){
+        tasksTracker.addReportPerSection(fileToWriteLength, threadName, completed, time);
         statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger));
     }
 

@@ -50,18 +50,19 @@ public class FileFillTask implements Callable {
             long completed = 0;
             long time;
             while (fileToRead.getFilePointer() - filesDTO.getFileToReadOffset() < fileToWriteLength) {
-
                 if (bufferSize >= fileToWriteLength) {
                     logger.debug("Buffer Size >= File to write length . FilePointer: " + fileToRead.getFilePointer() + this);
                     time = copyFileAndGetSpentTime(fileToRead, fileToWrite, fileToWriteLength);
                     completed += fileToWriteLength;
+                    statisticService.trackTaskProcess(fileToWriteLength, threadName, completed, time);
                 } else {
                     logger.debug("Buffer Size < File to write length. FilePointer: " + fileToRead.getFilePointer() + this);
                     time = copyFileAndGetSpentTime(fileToRead, fileToWrite, bufferSize);
                     fileToWriteLength -= bufferSize;
                     completed += bufferSize;
+                    statisticService.trackTaskProcess(bufferSize, threadName, completed, time);
                 }
-                statisticService.trackTaskProcess(fileToWriteLength, threadName, completed, time);
+
             }
 
             return filesDTO.getFileToWrite();

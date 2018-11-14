@@ -33,12 +33,12 @@ public class TasksTracker {
      * @param threadName       name of the section
      */
 
-    public synchronized void addReportPerSection(long fileToWriteLength, String threadName, long alreadyRead, long time) {
+    public synchronized void addReportPerSection(long fileToWriteLength, String threadName, long completed, long time) {
 
         taskReport.addCompletedTasks(fileToWriteLength);
         bufferTime.setBuffer(fileToWriteLength);
         bufferTime.setTimeNanoSec(time);
-        this.reportsPerSection.put(threadName, new TaskReport(fileToWriteLength, alreadyRead));
+        this.reportsPerSection.put(threadName, new TaskReport(fileToWriteLength, completed));
     }
 
     /**
