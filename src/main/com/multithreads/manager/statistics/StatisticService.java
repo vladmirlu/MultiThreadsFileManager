@@ -3,9 +3,12 @@ package com.multithreads.manager.statistics;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Statistics service.
@@ -30,51 +33,24 @@ public class StatisticService {
     /**
      * Calculates progress in percentage.
      *
-     * @param completedTasks number of completed tasks
-     * @param allTasks       number of total tasks
+     * @param completed number of completed tasks
+     * @param total       number of total tasks
      * @return progress
      */
-    public int calculateProgress(long completedTasks, long allTasks) {
-        double semiRes = (double) completedTasks / ((double) allTasks) * 100;
-        long result = Math.round(semiRes);
-
-        return (int) result;
+    public int calculateProgress(long completed, long total) {
+        return (int) Math.round((double) completed / ((double) total) * 100);
     }
 
-    /**
-     * Calculates progress for each section.
-     *
-     * @param reports map of section and corresponding task report
-     * @return progress for each section
-     */
-   /* public Map<String, Integer> calculateTasksProgress(final Map<String, TaskReport> reports) {
-        Map<String, Integer> unitProgress = new HashMap<>();
-        reports.forEach((id, report) -> unitProgress.put(id, calculateProgress(report.getCompleted(), report.getTotal())));
+    public void trackTaskProcess(long completed, String threadName,  long total, long time){
 
-        return unitProgress;
-    }*/
-
-    /**
-     * Calculates time remaining.
-     *
-     * @param bufferTasks       buffer of bytes
-     * @param bufferTimeNanoSec time to read and write buffer bytes (in nanoseconds)
-     * @param tasksLeft    remaining tasks
-     * @return time remaining
-     */
-   /* public long getCountTimeLeft(long bufferTasks, long bufferTimeNanoSec, long tasksLeft) {
-        return ((tasksLeft * bufferTimeNanoSec) / bufferTasks) / 1000000;
-    }*/
-
-    public void trackTaskProcess(long fileToWriteLength, String threadName, long completed, long total, long time){
-        tasksTracker.addReportPerSection(fileToWriteLength, threadName, completed, total, time);
-        statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger));
+        tasksTracker.addReportPerSection(completed, threadName,  total, time);
+        Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger), tasksTracker.getReportsPerSection());
+       // System.out.println(getTaskTracking(future));
     }
 
-    /*public String getTaskTracking(){
+    public String getTaskTracking(Future<Map<String, TaskReport>> future){
         StringBuilder builder = new StringBuilder();
         try {
-            Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger));
             Iterator entries = future.get().entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
@@ -87,9 +63,13 @@ public class StatisticService {
         }
         //tasksTracker = resetTaskTracker();
         return builder.toString();
-    }*/
+    }
 
     public ExecutorService getStatisticsPool() {
         return statisticsPool;
+    }
+
+    public TasksTracker getTasksTracker() {
+        return tasksTracker;
     }
 }

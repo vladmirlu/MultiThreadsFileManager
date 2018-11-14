@@ -38,6 +38,7 @@ public class FileMerger {
         List<File> files = fileService.getSplitFilesList(directoryPath);
         File originalFile = fileService.createOriginalFile(files);
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
+        statisticService.getTasksTracker().setTotalOfTask(originalFile.length());
 
         long count = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 : files.size();
         List<Future<File>> futures = new ArrayList<>();

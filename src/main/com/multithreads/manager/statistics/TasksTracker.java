@@ -10,9 +10,7 @@ public class TasksTracker {
     /**
      * Report about completed and total tasks.
      */
-    private TaskReport taskReport;
-
-    private BufferTime bufferTime;
+    private final TaskReport taskReport;
 
     /**
      * Map of section and corresponding task report.
@@ -23,7 +21,6 @@ public class TasksTracker {
     TasksTracker(){
         reportsPerSection = new HashMap<>();
         taskReport = new TaskReport(0,0, 0);
-        bufferTime = new BufferTime(0,0);
 
     }
 
@@ -33,11 +30,14 @@ public class TasksTracker {
      * @param threadName       name of the section
      */
 
-    public synchronized void addReportPerSection(long toWriteLength, String threadName, long completed, long total, long time) {
+    public synchronized void addReportPerSection(long completed, String threadName, long total, long time) {
 
-        taskReport.addCompletedTasks(toWriteLength);
-        taskReport.addTotalTasks(total);
-        taskReport.addTotalSpentTime(total);
+        taskReport.addCompletedTasks(completed);
+        //taskReport.addTotalTasks(total);
+        taskReport.addTotalSpentTime(time);
+
+        System.out.println("completed = " + taskReport.getCompleted());
+        System.out.println("total = " + taskReport.getTotal());
         this.reportsPerSection.put(threadName, new TaskReport(completed, total, time));
     }
 
@@ -45,6 +45,11 @@ public class TasksTracker {
      * Sets total tasks.
      *
      */
+    public synchronized void setTotalOfTask(long total){
+       taskReport.setTotal(total);
+    }
+
+
     public synchronized void resetTracker() {
         taskReport.setTotal(0);
         taskReport.setCompleted(0);

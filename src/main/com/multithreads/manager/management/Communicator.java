@@ -8,7 +8,12 @@ import com.multithreads.manager.management.workers.FileSplitter;
 import com.multithreads.manager.statistics.StatisticService;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Tool for interaction with user.
@@ -49,7 +54,8 @@ public class Communicator {
                     String filePath = scanner.nextLine();
                     System.out.println("Input please the size in bytes of file split part:");
                     String splitSize = scanner.nextLine();
-                    System.out.println("Quantity of split files = " + fileSplitter.split(filePath, splitSize).size());
+                    List<Future<File>> futures = fileSplitter.split(filePath, splitSize);
+                    System.out.println("Quantity of split files = " + futures.size());
                     openConsole();
                 case MERGE:
                     System.out.println("Input please the directory path to merge all files from there:");

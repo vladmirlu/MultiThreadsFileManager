@@ -57,6 +57,6 @@ public enum FileSizeUnit {
                 sizeUnit = fileSizeUnit;
             }
         }
-        return BUFFER_SIZE * sizeUnit.coefficient;
+        return 8 * sizeUnit.coefficient;
     }
 }

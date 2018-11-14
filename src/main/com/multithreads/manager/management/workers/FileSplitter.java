@@ -39,7 +39,8 @@ public class FileSplitter {
     public List <Future<File>> split(String filePath, String partFileSize) throws IOException{
 
         File file = fileService.getFileCreator().getFile(filePath);
-        System.out.println(file.hashCode());
+        statisticService.getTasksTracker().setTotalOfTask(file.length());
+
         long splitFileLength = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
         long bytesLeftAmount = file.length() % splitFileLength;
         long partsQuantity = (file.length() - bytesLeftAmount) / splitFileLength;
