@@ -52,10 +52,11 @@ public class ProcessPrinter implements Runnable{
             }
 
             long completed = tasksTracker.getCompletedTasks();
-            long all = tasksTracker.getTotalTasks();
-            totalProgress = statisticService.calculateProgress(completed, all);
+            long total = tasksTracker.getTotalTasks();
+            totalProgress = statisticService.calculateProgress(completed, total);
 
-            System.out.println(buildProgress(completed, all, totalProgress));
+            System.out.println("totalProgress" + totalProgress);
+            System.out.println(buildProgress(completed, total, totalProgress));
 
             logger.trace("Printed progress." + this);
         }
@@ -63,11 +64,11 @@ public class ProcessPrinter implements Runnable{
 
     }
 
-    String buildProgress(Long completed, Long all, Integer totalProgress){
+    String buildProgress(Long completed, Long total, Integer totalProgress){
 
-        long timeLeft = statisticService.getCountTimeLeft(tasksTracker.getBufferTasks(), tasksTracker.getBufferTimeNanoSec(), all - completed);
+        long timeLeft = statisticService.getCountTimeLeft(tasksTracker.getBufferTasks(), tasksTracker.getBufferTimeNanoSec(), total - completed);
         Map<String, Integer> taskProgress = statisticService.calculateTasksProgress(tasksTracker.getReportsPerSection());
-        logger.debug("Completed tasks: " + completed + "." + "Total tasks: " + all + "." + "Total progress: " + totalProgress + "." + "Time remaining: " + timeLeft + "." + "Progress per section: " + taskProgress + this);
+        logger.debug("Completed tasks: " + completed + "." + "Total tasks: " + total + "." + "Total progress: " + totalProgress + "." + "Time remaining: " + timeLeft + "." + "Progress per section: " + taskProgress + this);
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");

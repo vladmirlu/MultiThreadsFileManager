@@ -36,6 +36,7 @@ public class TasksTracker {
     public synchronized void addReportPerSection(long toWriteLength, String threadName, long completed, long total, long time) {
 
         taskReport.addCompletedTasks(toWriteLength);
+        taskReport.addTotalTasks(total);
         bufferTime.setBuffer(toWriteLength);
         bufferTime.setTimeNanoSec(time);
         this.reportsPerSection.put(threadName, new TaskReport(completed, total));

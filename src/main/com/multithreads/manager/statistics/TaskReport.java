@@ -37,7 +37,11 @@ public class TaskReport {
     }
 
     public void addCompletedTasks(long completed) {
-        this.completed = this.completed + completed;
+        this.completed += completed;
+    }
+
+    public void addTotalTasks(long total) {
+        this.total += total;
     }
 
     @Override
