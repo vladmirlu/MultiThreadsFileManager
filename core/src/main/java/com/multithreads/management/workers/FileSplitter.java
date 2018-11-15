@@ -51,20 +51,20 @@ public class FileSplitter {
             futures.add(f);
         }
 
-        return futures.stream().map(future -> { try { return future.get(10, TimeUnit.SECONDS); } catch (InterruptedException | ExecutionException |
-            TimeoutException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
+        /*return futures.stream().filter(f -> f.isDone()).map(future -> { try { return future.get(1000, TimeUnit.MILLISECONDS); } catch (InterruptedException | ExecutionException |
+            TimeoutException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());*/
 
+        return getSplitFiles(futures);
     }
 
-    /*public List <File> getSplitFiles(List<Future<File>> futures){
+    public List <File> getSplitFiles(List<Future<File>> futures){
         List<File> files = new ArrayList<>();
         try {
             for (Future<File> future : futures) {
                 while (!future.isDone()) {
-                    Thread.sleep(1000);
+
                 }
                 files.add(future.get());
-
             }
         }catch (InterruptedException e){
             e.printStackTrace();
@@ -72,5 +72,5 @@ public class FileSplitter {
             e.printStackTrace();
         }
         return files;
-    }*/
+    }
 }

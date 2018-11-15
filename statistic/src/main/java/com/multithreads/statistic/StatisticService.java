@@ -45,26 +45,7 @@ public class StatisticService {
     public void trackTaskProcess(long completed, String threadName,  long total, long time){
 
         tasksTracker.addReportPerSection(completed, threadName,  total, time);
-        Future<Map<String, TaskReport>> future = statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger), tasksTracker.getReportsPerSection());
-        if(future.isDone())
-        System.out.println(getTaskTracking(future));
-    }
-
-    public String getTaskTracking(Future<Map<String, TaskReport>> future){
-        StringBuilder builder = new StringBuilder();
-        try {
-            Iterator entries = future.get().entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                builder.append("\nKey = ").append(entry.getKey()).append(", Value = ").append(entry.getValue());
-            }
-        } catch (ExecutionException e){
-            e.printStackTrace();
-        }catch (InterruptedException i){
-            i.printStackTrace();
-        }
-        //tasksTracker = resetTaskTracker();
-        return builder.toString();
+         statisticsPool.submit(new ProcessPrinter(tasksTracker, this, logger), tasksTracker.getTaskReport());
     }
 
     public ExecutorService getStatisticsPool() {
