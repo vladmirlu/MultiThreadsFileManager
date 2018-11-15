@@ -1,18 +1,17 @@
-package com.multithreads.manager.workers;
+package com.multithreads.management.workers;
 
-import com.multithreads.manager.constants.FileSizeUnit;
-import com.multithreads.manager.model.FilesDTO;
-import statistics.StatisticService;
+import com.multithreads.management.constants.FileSizeUnit;
+import com.multithreads.management.model.FilesDTO;
+import com.multithreads.statistic.StatisticService;
 
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.util.concurrent.Callable;
 
 /**
  * Transfers a certain number of bytes from one file to another.
  */
-public class FileFillTask implements Callable {
+public class FileFillTask implements Runnable {
 
     private final StatisticService statisticService;
 
@@ -40,7 +39,7 @@ public class FileFillTask implements Callable {
      * Executes transfer.
      */
     @Override
-    public File call() {
+    public void run() {
         try {
             final String threadName = Thread.currentThread().getName();
             logger.info("FileFillTask started." + this);
@@ -61,14 +60,12 @@ public class FileFillTask implements Callable {
                     completed += bufferSize;
                 }
                 try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
                 statisticService.trackTaskProcess(completed,  threadName,  filesDTO.getFileWriteLength(), time);
             }
-
-            return filesDTO.getFileToWrite();
 
         } catch (IOException ex) {
             throw new RuntimeException(ex.getMessage());

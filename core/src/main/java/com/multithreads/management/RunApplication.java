@@ -1,4 +1,4 @@
-package com.multithreads.manager;
+package com.multithreads.management;
 
 import org.apache.log4j.Logger;
 
@@ -17,10 +17,14 @@ public class RunApplication {
      * @param args arguments
      */
     public static void main(String[] args) {
-        logger.info("Main method started.");
-
-            Communicator communicator = new Communicator(logger);
-            communicator.openConsole();
+            try {
+                Communicator communicator = new Communicator(logger);
+                logger.info("Main method started. " + communicator.toString());
+                communicator.openConsole();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
 
     }
 }

@@ -6,16 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="core" />
         <module name="FileManageTestApp" />
+        <module name="statistic" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="core" target="1.8" />
       <module name="f" target="1.8" />
       <module name="file-manager (1)" target="1.5" />
       <module name="FileManageTestApp" target="1.8" />
       <module name="files-manager" target="1.8" />
       <module name="fileworker" target="1.5" />
       <module name="Multi_threads_file_manager" target="1.8" />
+      <module name="statistic" target="1.8" />
       <module name="statistics" target="1.8" />
     </bytecodeTargetLevel>
   </component>

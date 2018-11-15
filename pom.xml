@@ -7,6 +7,10 @@
     <groupId>com.multithreads.manager</groupId>
     <artifactId>Multi_threads_file_manager</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>core</module>
+        <module>statistic</module>
+    </modules>
     <packaging>pom</packaging>
 
     <build>
