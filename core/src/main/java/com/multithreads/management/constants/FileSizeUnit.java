@@ -1,4 +1,4 @@
-package com.multithreads.manager.constants;
+package com.multithreads.management.constants;
 
 /**
  * Available size units (size types)

@@ -1,4 +1,4 @@
-package statistics;
+package com.multithreads.statistic;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,6 @@ public class TasksTracker {
     TasksTracker(){
         reportsPerSection = new HashMap<>();
         taskReport = new TaskReport(0,0, 0);
-
     }
 
     /**
@@ -33,7 +32,6 @@ public class TasksTracker {
     public synchronized void addReportPerSection(long completed, String threadName, long total, long time) {
 
         taskReport.addCompletedTasks(completed);
-        //taskReport.addTotalTasks(total);
         taskReport.addTotalSpentTime(time);
         this.reportsPerSection.put(threadName, new TaskReport(completed, total, time));
     }

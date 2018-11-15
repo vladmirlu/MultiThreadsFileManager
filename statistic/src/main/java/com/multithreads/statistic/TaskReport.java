@@ -1,4 +1,4 @@
-package statistics;
+package com.multithreads.statistic;
 
 /**
  * Report about completed and total tasks.
@@ -48,10 +48,6 @@ public class TaskReport {
 
     public void addCompletedTasks(long completed) {
         this.completed += completed;
-    }
-
-    public void addTotalTasks(long total) {
-        this.total += total;
     }
 
     public void addTotalSpentTime(long  spentTimeNanoSec){

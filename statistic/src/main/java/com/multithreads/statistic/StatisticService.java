@@ -1,4 +1,4 @@
-package statistics;
+package com.multithreads.statistic;
 
 import org.apache.log4j.Logger;
 
@@ -17,9 +17,10 @@ public class StatisticService {
 
     private final Logger logger;
 
-    public StatisticService(Logger logger){
-        this.logger = logger;
-        this.tasksTracker = new TasksTracker();
+    public StatisticService(){
+
+        tasksTracker = new TasksTracker();
+        logger = Logger.getRootLogger();
     }
     /**
      * Statistics thread pool.

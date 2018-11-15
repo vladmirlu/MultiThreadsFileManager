@@ -1,6 +1,6 @@
-package com.multithreads.manager.workers;
+package com.multithreads.management.workers;
 
-import com.multithreads.manager.constants.FileSizeUnit;
+import com.multithreads.management.constants.FileSizeUnit;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -12,16 +12,16 @@ import java.util.ResourceBundle;
 /**
  * File assistant tool.
  */
-public class FileCreator {
+public class FileProvider {
 
     private final Logger logger;
 
     private ResourceBundle RB;
 
-    FileCreator(Logger logger){
+    FileProvider(Logger logger){
         this.logger = logger;
         try {
-            FileInputStream fis = new FileInputStream("src/main/resources/application.properties");
+            FileInputStream fis = new FileInputStream("core/src/main/resources/application.properties");
             this.RB = new PropertyResourceBundle(fis);
         }catch (MissingResourceException m){
             m.printStackTrace();
@@ -30,7 +30,6 @@ public class FileCreator {
             e.printStackTrace();
         }
     }
-
 
     public File getDirectory(String directoryPath) {
       File directory =  new File(directoryPath);

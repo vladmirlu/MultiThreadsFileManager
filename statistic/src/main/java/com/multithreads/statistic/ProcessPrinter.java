@@ -1,11 +1,11 @@
-package statistics;
+package com.multithreads.statistic;
 
 import org.apache.log4j.Logger;
 
 /**
  * Prints progress of the tasks.
  */
-public class ProcessPrinter implements Runnable{
+public class ProcessPrinter extends Thread{
 
     /**
      * Statistics logger.
@@ -53,6 +53,7 @@ public class ProcessPrinter implements Runnable{
             System.out.println("complated = " + tasksTracker.getTaskReport().getCompleted() + "; total = " + tasksTracker.getTaskReport().getTotal());
 
             totalProgress = statisticService.calculateProgress(tasksTracker.getTaskReport().getCompleted(), tasksTracker.getTaskReport().getTotal());
+
             System.out.println(buildProgress(totalProgress));
 
             logger.trace("Printed progress." + this);
