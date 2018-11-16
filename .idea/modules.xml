@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FileManageTestApp.iml" filepath="$PROJECT_DIR$/FileManageTestApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/Multi_threads_file_manager.iml" filepath="$PROJECT_DIR$/Multi_threads_file_manager.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/statistic/statistic.iml" filepath="$PROJECT_DIR$/statistic/statistic.iml" />

@@ -43,7 +43,6 @@ public class FileMerger {
             Future<File> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile);
             futures.add(future);
         }
-        return futures.stream().map(future -> { try { return future.get(10, TimeUnit.SECONDS); } catch (InterruptedException | ExecutionException |
-                TimeoutException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
+        return fileService.getSplitFiles(futures);
     }
 }

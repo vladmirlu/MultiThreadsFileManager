@@ -13,11 +13,6 @@ public class ProcessPrinter extends Thread{
     private final Logger logger;
 
     /**
-     * Statistics service.
-     */
-    private final StatisticService statisticService;
-
-    /**
      * Tool for interaction with the src.main.java.statistics module.
      */
     private TasksTracker tasksTracker;
@@ -28,9 +23,8 @@ public class ProcessPrinter extends Thread{
      *
      * @param tasksTracker tool for interaction with the src.main.java.statistics module
      */
-    public ProcessPrinter(TasksTracker tasksTracker, StatisticService statisticService, Logger logger ) {
+    public ProcessPrinter(TasksTracker tasksTracker, Logger logger ) {
         this.tasksTracker = tasksTracker;
-        this.statisticService = statisticService;
         this.logger = logger;
     }
 
@@ -52,7 +46,7 @@ public class ProcessPrinter extends Thread{
 
             System.out.println("complated = " + tasksTracker.getTaskReport().getCompleted() + "; total = " + tasksTracker.getTaskReport().getTotal());
 
-            totalProgress = statisticService.calculateProgress(tasksTracker.getTaskReport().getCompleted(), tasksTracker.getTaskReport().getTotal());
+            totalProgress = calculateProgress(tasksTracker.getTaskReport().getCompleted(), tasksTracker.getTaskReport().getTotal());
 
             System.out.println(buildProgress(totalProgress));
 
@@ -67,9 +61,20 @@ public class ProcessPrinter extends Thread{
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
         tasksTracker.getReportsPerSection().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
-                .append(statisticService.calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
+                .append(calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
                 .append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ms. "));
         progressBuilder.append("Total spent time: ").append(tasksTracker.getTaskReport().getSpentTimeNanoSec()).append("ms ");
         return progressBuilder.toString();
+    }
+
+    /**
+     * Calculates progress in percentage.
+     *
+     * @param completed number of completed tasks
+     * @param total       number of total tasks
+     * @return progress
+     */
+    public int calculateProgress(long completed, long total) {
+        return (int) Math.round((double) completed / ((double) total) * 100);
     }
 }

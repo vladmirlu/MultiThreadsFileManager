@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -67,6 +68,24 @@ public class FileService {
     public void shutdownThreadPools(){
         fileWorkersPool.shutdown();
         statisticService.getStatisticsPool().shutdown();
+    }
+
+    public synchronized List<File> getSplitFiles(List<Future<File>> futures) {
+        List<File> files = new ArrayList<>();
+        try {
+                for (Future<File> future : futures) {
+                    while (!future.isDone()) {
+                        wait();
+                    }
+                    files.add(future.get());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        notifyAll();
+        return files;
     }
 
     public FileProvider getFileProvider() {
