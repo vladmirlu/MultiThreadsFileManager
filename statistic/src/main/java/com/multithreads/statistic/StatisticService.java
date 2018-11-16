@@ -34,7 +34,7 @@ public class StatisticService {
 
     public void trackTaskProcess(long completed, String threadName,  long total, long time){
 
-        tasksTracker.addReportPerSection(completed, threadName,  total, time);
+         tasksTracker.addReportPerSection(completed, threadName,  total, time);
          statisticsPool.submit(new ProcessPrinter(tasksTracker, logger), tasksTracker.getTaskReport());
     }
 

@@ -19,7 +19,7 @@ public class ProcessPrinter extends Thread{
 
 
     /**
-     * Initializes tasksTracker and constants fields.
+     * Initializes tasksTracker and commands fields.
      *
      * @param tasksTracker tool for interaction with the src.main.java.statistics module
      */

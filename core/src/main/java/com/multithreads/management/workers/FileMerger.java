@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
- * Merge constants.
+ * Merge commands.
  */
 public class FileMerger {
 
@@ -28,6 +28,7 @@ public class FileMerger {
 
         List<File> files = fileService.getSplitFilesList(directoryPath);
         File originalFile = fileService.createOriginalFile(files);
+
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 
         long count = files.get(files.size() - 1).length() < files.get(0).length() ? files.size() - 1 : files.size();

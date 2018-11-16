@@ -25,7 +25,7 @@ public class FileService {
     /**
      * File workers thread pool.
      */
-    private final  ExecutorService fileWorkersPool;
+    private final ExecutorService fileWorkersPool;
 
     private final StatisticService statisticService;
 
@@ -42,7 +42,7 @@ public class FileService {
     }
 
     @SuppressWarnings("unchacked")
-    public Future<File> getWorkerFuture(File parentFile, long length,  long fromFileOffset, long toFileOffset,  File childFile) throws IOException{
+    public Future<File> getWorkerFuture(File parentFile, long length, long fromFileOffset, long toFileOffset, File childFile) throws IOException {
         FilesDTO filesDTO = new FilesDTO(parentFile, childFile, fromFileOffset, toFileOffset, length);
         statisticService.getTasksTracker().setTotalOfTask(parentFile.length() > childFile.length() ? parentFile.length() : childFile.length());
         return fileWorkersPool.submit(new FileFillTask(filesDTO, statisticService, logger), filesDTO.getFileToWrite());
@@ -58,14 +58,14 @@ public class FileService {
         logger.debug("Parsing files in the directory path");
         File directory = fileProvider.getDirectory(directoryPath);
         File[] files = directory.listFiles();
-        if(files != null) {
+        if (files != null) {
             return Arrays.asList(files);
         }
-        logger.error("Error! Not found files to merge in the directory "+ directory.getName());
+        logger.error("Error! Not found files to merge in the directory " + directory.getName());
         throw new FileNotFoundException();
     }
 
-    public void shutdownThreadPools(){
+    public void shutdownThreadPools() {
         fileWorkersPool.shutdown();
         statisticService.getStatisticsPool().shutdown();
     }
@@ -73,18 +73,17 @@ public class FileService {
     public synchronized List<File> getSplitFiles(List<Future<File>> futures) {
         List<File> files = new ArrayList<>();
         try {
-                for (Future<File> future : futures) {
-                    while (!future.isDone()) {
-                        wait();
-                    }
-                    files.add(future.get());
+            for (Future<File> future : futures) {
+                if (!future.isDone()) {
+                    wait();
+                }
+                files.add(future.get());
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        notifyAll();
         return files;
     }
 

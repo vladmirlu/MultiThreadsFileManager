@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
- * Split constants.
+ * Split commands.
  */
 public class FileSplitter {
 
@@ -51,9 +51,8 @@ public class FileSplitter {
             futures.add(f);
         }
 
-        /*return futures.stream().filter(f -> f.isDone()).map(future -> { try { return future.get(1000, TimeUnit.MILLISECONDS); } catch (InterruptedException | ExecutionException |
-            TimeoutException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());*/
+        return futures.stream().map(future -> { try { return future.get(1000, TimeUnit.MILLISECONDS); } catch (InterruptedException | ExecutionException |
+            TimeoutException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
 
-        return fileService.getSplitFiles(futures);
     }
 }

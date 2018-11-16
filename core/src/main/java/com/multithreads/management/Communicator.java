@@ -1,16 +1,13 @@
 package com.multithreads.management;
 
-import com.multithreads.management.constants.Command;
+import com.multithreads.management.commands.Command;
 import com.multithreads.management.exception.InvalidCommandException;
 import com.multithreads.management.workers.FileService;
-import com.multithreads.statistic.StatisticService;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 
 /**

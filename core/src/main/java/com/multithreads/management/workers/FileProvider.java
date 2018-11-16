@@ -1,6 +1,5 @@
 package com.multithreads.management.workers;
 
-import com.multithreads.management.constants.FileSizeUnit;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -17,6 +16,11 @@ public class FileProvider {
     private final Logger logger;
 
     private ResourceBundle RB;
+
+    /**
+     * Buffer size.
+     */
+    public static final int BUFFER_SIZE =  8 * 1024;
 
     FileProvider(Logger logger){
         this.logger = logger;
@@ -70,11 +74,11 @@ public class FileProvider {
         long restToRead = size;
 
         while (randomAccessFile.length() < size) {
-            if (restToRead <= FileSizeUnit.BUFFER_SIZE) {
+            if (restToRead <= BUFFER_SIZE) {
                 randomAccessFile.write(new byte[(int) restToRead]);
             } else {
-                randomAccessFile.write(new byte[ FileSizeUnit.BUFFER_SIZE]);
-                restToRead = restToRead - FileSizeUnit.BUFFER_SIZE;
+                randomAccessFile.write(new byte[BUFFER_SIZE]);
+                restToRead = restToRead - BUFFER_SIZE;
             }
         }
         randomAccessFile.close();
