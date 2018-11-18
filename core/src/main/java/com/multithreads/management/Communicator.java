@@ -6,8 +6,6 @@ import com.multithreads.management.workers.FileService;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -34,21 +32,8 @@ public class Communicator {
         Scanner scanner = new Scanner(System.in);
         try {
             Command command = Command.chooseCommand(scanner);
-            switch (command) {
-                case SPLIT:
-                    System.out.println("Input please the complete file name(with the file path):");
-                    String filePath = scanner.nextLine();
-                    System.out.println("Input please the size in bytes of file split part:");
-                    String splitSize = scanner.nextLine();
-                    System.out.println("Quantity of split files = " + command.apply(Arrays.asList(filePath, splitSize), fileService).size());
+                    System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
                     openConsole();
-                case MERGE:
-                    System.out.println("Input please the directory path to merge all files from there:");
-                    System.out.println(command.apply(Collections.singletonList(scanner.nextLine()), fileService).size());
-                    openConsole();
-                default:
-                    System.out.println("good bye");
-            }
         } catch (InvalidCommandException i){
             i.printStackTrace();
             openConsole();
@@ -58,6 +43,7 @@ public class Communicator {
         }
         finally {
             fileService.shutdownThreadPools();
+            System.out.println("good bye");
         }
     }
 }

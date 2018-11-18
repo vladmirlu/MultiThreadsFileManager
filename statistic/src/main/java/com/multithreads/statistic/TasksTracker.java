@@ -1,7 +1,9 @@
 package com.multithreads.statistic;
 
-import java.util.HashMap;
+import com.multithreads.statistic.model.TaskReport;
+
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Tool for interaction with the src.main.java.statistics module.
@@ -10,17 +12,17 @@ public class TasksTracker {
     /**
      * Report about completed and total tasks.
      */
-    private final TaskReport taskReport;
+    private final TaskReport commonReport;
 
     /**
      * Map of section and corresponding task report.
      */
-    private final Map<String, TaskReport> reportsPerSection ;
+    private final Map<String, TaskReport> allThreadsReports;
 
 
     TasksTracker(){
-        reportsPerSection = new HashMap<>();
-        taskReport = new TaskReport(0,0, 0);
+        allThreadsReports = new ConcurrentHashMap<>();
+        commonReport = new TaskReport(0,0, 0);
     }
 
     /**
@@ -29,31 +31,36 @@ public class TasksTracker {
      * @param threadName       name of the section
      */
 
-    public synchronized void addReportPerSection(long completed, String threadName, long total, long time) {
+     void fillAllThreadsReports(long completed, String threadName, long spentTime) {
 
-        taskReport.addCompletedTasks(completed);
-        taskReport.addTotalSpentTime(time);
-        this.reportsPerSection.put(threadName, new TaskReport(completed, total, time));
+        if(commonReport.getCompleted() + completed <= commonReport.getTotal()) {
+
+            commonReport.setCompleted(commonReport.getCompleted() + completed);
+            commonReport.setSpentTimeNanoSec(commonReport.getSpentTimeNanoSec() + spentTime);
+
+            if (allThreadsReports.containsKey(threadName)) {
+                TaskReport threadReport = allThreadsReports.get(threadName);
+                threadReport.setCompleted(threadReport.getCompleted() + completed);
+                threadReport.setSpentTimeNanoSec(threadReport.getSpentTimeNanoSec() + spentTime);
+            } else
+                allThreadsReports.put(threadName, new TaskReport(completed, commonReport.getTotal(), spentTime));
+        }
     }
 
     /**
      * Sets total tasks.
      *
      */
-    public synchronized void setTotalOfTask(long total){
-        resetTracker();
-        taskReport.setTotal(total);
+     void initAllReports(long total){
+        allThreadsReports.clear();
+        commonReport.setSpentTimeNanoSec(0);
+        commonReport.setCompleted(0);
+        commonReport.setTotal(total);
     }
 
 
-    public synchronized void resetTracker() {
-        taskReport.setTotal(0);
-        taskReport.setCompleted(0);
-        reportsPerSection.clear();
-    }
-
-    public synchronized TaskReport getTaskReport() {
-        return taskReport;
+     synchronized TaskReport getCommonReport() {
+        return commonReport;
     }
 
     /**
@@ -61,8 +68,8 @@ public class TasksTracker {
      *
      * @return map of section and corresponding task report
      */
-    public synchronized Map<String, TaskReport> getReportsPerSection() {
-        return reportsPerSection;
+       Map<String, TaskReport> getAllThreadsReports() {
+        return allThreadsReports;
     }
 
 

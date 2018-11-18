@@ -7,11 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 /**
  * Merge commands.
@@ -24,7 +20,7 @@ public class FileMerger {
      * @return list with merged file
      * @throws IOException             if an I/O error occurs
      */
-    public List <File> merge(String directoryPath, FileService fileService) throws IOException{
+    public List<Future<File>> merge(String directoryPath, FileService fileService) throws IOException{
 
         List<File> files = fileService.getSplitFilesList(directoryPath);
         File originalFile = fileService.createOriginalFile(files);
@@ -40,10 +36,10 @@ public class FileMerger {
             futures.add(future);
         }
         if (count == files.size() - 1) {
-            long totalSize = fileService.getFileProvider().calculateTotalSize(files);
+            long totalSize = fileService.calculateTotalSize(files);
             Future<File> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile);
             futures.add(future);
         }
-        return fileService.getSplitFiles(futures);
+        return futures;
     }
 }

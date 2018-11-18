@@ -9,25 +9,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Future;
 
 /**
  * Available commands.
  */
 public enum Command {
 
-    SPLIT("s", "To split file input "){
-
-        public List<File> apply(List<String> param, FileService fileService) throws IOException {
+    SPLIT("s", "To split file input ") {
+        public List<Future<File>> apply(FileService fileService, Scanner scanner) throws IOException {
+            System.out.println("Input please the complete file name(with the file path):");
+            String filePath = scanner.nextLine();
+            System.out.println("Input please the size in bytes of file split part:");
+            String splitSize = scanner.nextLine();
             FileSplitter splitter = new FileSplitter();
-            return splitter.split(param.get(0), param.get(1), fileService);
+            return splitter.split(filePath, splitSize, fileService);
         }
-    }
-    ,
-    MERGE("m", "To merge file input "){
-
-        public List<File> apply(List<String> param, FileService fileService) throws IOException {
+    },
+    MERGE("m", "To merge file input ") {
+        public List<Future<File>> apply(FileService fileService, Scanner scanner) throws IOException {
+            System.out.println("Input please the directory path to merge all files from there:");
+            String directoryPath = scanner.nextLine();
             FileMerger merger = new FileMerger();
-           return merger.merge(param.get(0), fileService);
+            return merger.merge(directoryPath, fileService);
         }
     };
 
@@ -40,6 +44,7 @@ public enum Command {
 
     /**
      * Initializes the symbol variable.
+     *
      * @param symbol symbol of the commands
      */
     Command(String symbol, String message) {
@@ -47,16 +52,16 @@ public enum Command {
         this.message = message;
     }
 
-    public abstract List<File> apply(List<String> param, FileService fileService) throws IOException;
+    public abstract List<Future<File>> apply(FileService fileService, Scanner scanner) throws IOException;
 
     public static Command chooseCommand(Scanner scanner) throws InvalidCommandException {
 
         System.out.println(SPLIT.message + SPLIT.symbol
-                + "\n" +MERGE.message + MERGE.symbol);
+                + "\n" + MERGE.message + MERGE.symbol);
 
         String symbol = scanner.nextLine();
-        for(Command command: values()){
-            if (symbol.equalsIgnoreCase(command.symbol)){
+        for (Command command : values()) {
+            if (symbol.equalsIgnoreCase(command.symbol)) {
                 return command;
             }
         }

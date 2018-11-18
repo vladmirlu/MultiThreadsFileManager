@@ -13,14 +13,19 @@ import java.util.ResourceBundle;
  */
 public class FileProvider {
 
-    private final Logger logger;
-
-    private ResourceBundle RB;
+    /**
+     * Name of the file that will be created after merging.
+     */
+    public static final String SOURCE_FILENAME = "original";
 
     /**
      * Buffer size.
      */
     public static final int BUFFER_SIZE =  8 * 1024;
+
+    private final Logger logger;
+
+    private ResourceBundle RB;
 
     FileProvider(Logger logger){
         this.logger = logger;
@@ -56,10 +61,6 @@ public class FileProvider {
     }
 
     /**
-     * Name of the file that will be created after merging.
-     */
-    public static final String SOURCE_FILENAME = "original";
-    /**
      * Creates file.
      *
      * @param filePath file path
@@ -67,7 +68,6 @@ public class FileProvider {
      * @return created file
      * @throws IOException if an I/O error occurs.
      */
-
     public File createFile(String filePath, long size) throws IOException {
         File file = new File(filePath);
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
@@ -83,20 +83,5 @@ public class FileProvider {
         }
         randomAccessFile.close();
         return file;
-    }
-
-    /**
-     * Calculates total size of files.
-     *
-     * @param files list of files
-     * @return total size
-     */
-
-    public long calculateTotalSize(final List<File> files) {
-        long totalSize = 0;
-        for (File file : files) {
-            totalSize += file.length();
-        }
-        return totalSize;
     }
 }

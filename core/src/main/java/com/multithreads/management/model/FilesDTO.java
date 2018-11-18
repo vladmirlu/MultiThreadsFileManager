@@ -10,7 +10,7 @@ public class FilesDTO {
     private File fileToRead;
 
     /**
-     * FileFillTask destination file.
+     * FileTransfer destination file.
      */
     private File fileToWrite;
 

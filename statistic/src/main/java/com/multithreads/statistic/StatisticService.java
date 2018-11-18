@@ -2,12 +2,8 @@ package com.multithreads.statistic;
 
 import org.apache.log4j.Logger;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 /**
@@ -32,17 +28,17 @@ public class StatisticService {
      */
     private TasksTracker tasksTracker;
 
-    public void trackTaskProcess(long completed, String threadName,  long total, long time){
+    public void trackTaskProcess(long completed, String threadName, long time){
 
-         tasksTracker.addReportPerSection(completed, threadName,  total, time);
-         statisticsPool.submit(new ProcessPrinter(tasksTracker, logger), tasksTracker.getTaskReport());
+             tasksTracker.fillAllThreadsReports(completed, threadName, time);
+             statisticsPool.submit(new ProcessPrinter(tasksTracker, logger));
     }
 
     public ExecutorService getStatisticsPool() {
         return statisticsPool;
     }
 
-    public TasksTracker getTasksTracker() {
-        return tasksTracker;
+    public void initStatistic(long totalSize) {
+        tasksTracker.initAllReports(totalSize);
     }
 }

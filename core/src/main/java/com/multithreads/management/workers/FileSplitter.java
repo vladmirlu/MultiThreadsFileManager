@@ -9,11 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 /**
  * Split commands.
@@ -30,9 +26,9 @@ public class FileSplitter {
      * @return list of files
      * @throws IOException if an I/O error occurs
      */
-    public List<File> split(String filePath, String partFileSize, FileService fileService) throws IOException {
+    public List<Future<File>> split(String filePath, String partFileSize, FileService fileService) throws IOException {
 
-        File file = fileService.getFileProvider().getFile(filePath);
+        File file = fileService.getOriginalFile(filePath);
 
         long splitFileLength = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
         long bytesLeftAmount = file.length() % splitFileLength;
@@ -50,9 +46,6 @@ public class FileSplitter {
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount, file.length() - bytesLeftAmount, 0, partFile);
             futures.add(f);
         }
-
-        return futures.stream().map(future -> { try { return future.get(1000, TimeUnit.MILLISECONDS); } catch (InterruptedException | ExecutionException |
-            TimeoutException e) { throw new RuntimeException(e); } }).collect(Collectors.toList());
-
+        return futures;
     }
 }

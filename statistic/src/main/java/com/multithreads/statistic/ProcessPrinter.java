@@ -1,11 +1,10 @@
 package com.multithreads.statistic;
-
 import org.apache.log4j.Logger;
 
 /**
  * Prints progress of the tasks.
  */
-public class ProcessPrinter extends Thread{
+public class ProcessPrinter implements Runnable {
 
     /**
      * Statistics logger.
@@ -23,7 +22,7 @@ public class ProcessPrinter extends Thread{
      *
      * @param tasksTracker tool for interaction with the src.main.java.statistics module
      */
-    public ProcessPrinter(TasksTracker tasksTracker, Logger logger ) {
+    public ProcessPrinter(TasksTracker tasksTracker, Logger logger) {
         this.tasksTracker = tasksTracker;
         this.logger = logger;
     }
@@ -34,36 +33,31 @@ public class ProcessPrinter extends Thread{
     @Override
     public void run() {
 
-        logger.trace("ProcessPrinter started." + this);
-        int totalProgress = 0;
-        while (totalProgress < 100) {
+       /* try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e.getMessage());
+        }*/
+        logger.trace("Process printer started." + this);
 
-            try {
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+        /*System.out.println("complated = " + tasksTracker.getCommonReport().getCompleted() + "; total = " + tasksTracker.getCommonReport().getTotal());*/
 
-            System.out.println("complated = " + tasksTracker.getTaskReport().getCompleted() + "; total = " + tasksTracker.getTaskReport().getTotal());
+        float totalProgress = calculateProgress(tasksTracker.getCommonReport().getCompleted(), tasksTracker.getCommonReport().getTotal());
 
-            totalProgress = calculateProgress(tasksTracker.getTaskReport().getCompleted(), tasksTracker.getTaskReport().getTotal());
+        System.out.println(buildProgress(totalProgress));
+        System.out.flush();
 
-            System.out.println(buildProgress(totalProgress));
-
-            logger.trace("Printed progress." + this);
-        }
-        logger.trace("ProcessPrinter completed." + this);
-
+        logger.trace("Process printer finished." + this);
     }
 
-    String buildProgress(Integer totalProgress){
+    String buildProgress(float totalProgress) {
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
-        tasksTracker.getReportsPerSection().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
+        tasksTracker.getAllThreadsReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
                 .append(calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
                 .append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ms. "));
-        progressBuilder.append("Total spent time: ").append(tasksTracker.getTaskReport().getSpentTimeNanoSec()).append("ms ");
+        progressBuilder.append("Total spent time: ").append(tasksTracker.getCommonReport().getSpentTimeNanoSec()).append("ms ");
         return progressBuilder.toString();
     }
 
@@ -71,10 +65,10 @@ public class ProcessPrinter extends Thread{
      * Calculates progress in percentage.
      *
      * @param completed number of completed tasks
-     * @param total       number of total tasks
+     * @param total     number of total tasks
      * @return progress
      */
-    public int calculateProgress(long completed, long total) {
-        return (int) Math.round((double) completed / ((double) total) * 100);
+    public float calculateProgress(long completed, long total) {
+        return (float) completed / total * 100;
     }
 }

@@ -1,18 +1,18 @@
-package com.multithreads.statistic;
+package com.multithreads.statistic.model;
 
 /**
  * Report about completed and total tasks.
  */
 public class TaskReport {
 
-    private long completed;
+    private volatile long completed;
 
-    private long total;
+    private volatile long total;
 
     /**
      * Time to do buffer tasks (in nanoseconds).
      */
-    private long spentTimeNanoSec;
+    private volatile long spentTimeNanoSec;
 
     /**
      * Initializes completed and total tasks fields.
@@ -45,12 +45,7 @@ public class TaskReport {
     public void setTotal(long total) {
         this.total = total;
     }
-
-    public void addCompletedTasks(long completed) {
-        this.completed += completed;
-    }
-
-    public void addTotalSpentTime(long  spentTimeNanoSec){
-        this. spentTimeNanoSec +=  spentTimeNanoSec;
+    public void setSpentTimeNanoSec(long spentTimeNanoSec) {
+        this.spentTimeNanoSec = spentTimeNanoSec;
     }
 }
