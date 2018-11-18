@@ -1,5 +1,6 @@
 package com.multithreads.management.task;
 
+import com.multithreads.management.commands.Command;
 import com.multithreads.management.model.FilesDTO;
 import com.multithreads.management.workers.FileProvider;
 import com.multithreads.statistic.StatisticService;
@@ -79,7 +80,7 @@ public class FileTransfer implements Runnable {
     private long copyFile(RandomAccessFile fileToRead, RandomAccessFile fileToWrite, long bufferSize) throws IOException {
         byte[] buffer = new byte[(int) bufferSize];
         long startTime = System.nanoTime();
-        logger.debug("StartTime: " + startTime + this);
+        logger.debug("Start Time: " + startTime + this);
 
         fileToRead.read(buffer);
         fileToWrite.write(buffer);
@@ -87,7 +88,19 @@ public class FileTransfer implements Runnable {
         fileToWrite.seek(fileToWrite.getFilePointer());
 
         long endTime = System.nanoTime();
-        logger.debug("EndTime: " + endTime + this);
+        logger.debug("End Time: " + endTime + this);
         return endTime - startTime;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("FileTransfer { ").append("thread name: '").append(Thread.currentThread().getName())
+                .append('\'').append(", file to read: ").append(filesDTO.getFileToRead())
+                .append(", file to read offset = ").append(filesDTO.getFileToReadOffset())
+                .append(", file to write: ").append(filesDTO.getFileToWrite())
+                .append(", file to write offset:").append(filesDTO.getFileToWriteOffset())
+                .append(", write file length = ").append(filesDTO.getFileWriteLength())
+                .append(", user command: '").append(filesDTO.getFileToWriteOffset() == 0 ? Command.SPLIT.name() : Command.MERGE.name()).append('\'')
+                .append('}').toString();
     }
 }

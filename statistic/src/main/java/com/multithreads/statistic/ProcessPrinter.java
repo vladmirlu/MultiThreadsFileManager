@@ -16,7 +16,7 @@ public class ProcessPrinter implements Runnable {
      */
     private TasksTracker tasksTracker;
 
-
+    private float totalProgress;
     /**
      * Initializes tasksTracker and commands fields.
      *
@@ -42,7 +42,7 @@ public class ProcessPrinter implements Runnable {
 
         /*System.out.println("complated = " + tasksTracker.getCommonReport().getCompleted() + "; total = " + tasksTracker.getCommonReport().getTotal());*/
 
-        float totalProgress = calculateProgress(tasksTracker.getCommonReport().getCompleted(), tasksTracker.getCommonReport().getTotal());
+        totalProgress = calculateProgress(tasksTracker.getCommonReport().getCompleted(), tasksTracker.getCommonReport().getTotal());
 
         System.out.println(buildProgress(totalProgress));
         System.out.flush();
@@ -56,8 +56,8 @@ public class ProcessPrinter implements Runnable {
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
         tasksTracker.getAllThreadsReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
                 .append(calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
-                .append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ms. "));
-        progressBuilder.append("Total spent time: ").append(tasksTracker.getCommonReport().getSpentTimeNanoSec()).append("ms ");
+                .append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ns. "));
+        progressBuilder.append("Total spent time: ").append(tasksTracker.getCommonReport().getSpentTimeNanoSec()).append("ns ");
         return progressBuilder.toString();
     }
 
@@ -70,5 +70,14 @@ public class ProcessPrinter implements Runnable {
      */
     public float calculateProgress(long completed, long total) {
         return (float) completed / total * 100;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("ProcessPrinter { ").append("thread name = '")
+                .append(Thread.currentThread().getName()).append('\'').append(", common progress = ")
+                .append(totalProgress).append('\'').append(", spent time = ")
+                .append(tasksTracker.getCommonReport().getSpentTimeNanoSec()).append("ns. ").append('\'')
+                .append('}').toString();
     }
 }
