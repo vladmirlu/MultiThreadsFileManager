@@ -1,6 +1,7 @@
 package com.multithreads.management;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Main class of the application.
@@ -10,7 +11,7 @@ public class RunApplication {
     /**
      * Root logger.
      */
-    private final static Logger logger = Logger.getRootLogger();
+    private final static Logger logger = Logger.getLogger(RunApplication.class);
 
     /**
      * Start point of the application.
@@ -19,6 +20,7 @@ public class RunApplication {
     public static void main(String[] args) {
             try {
                 Communicator communicator = new Communicator(logger);
+                PropertyConfigurator.configure("core/src/main/resources/application.properties");
                 logger.info("Main method started. " + communicator.toString());
                 communicator.openConsole();
             }

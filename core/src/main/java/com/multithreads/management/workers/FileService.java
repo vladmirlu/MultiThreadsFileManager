@@ -34,15 +34,17 @@ public class FileService {
      */
     private final FileProvider fileProvider;
 
-    public FileService() {
-        this.logger = Logger.getRootLogger();
+    public FileService(Logger logger) {
+        this.logger = logger;
         this.fileProvider = new FileProvider(logger);
         this.statisticService = new StatisticService();
         this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        this.logger.debug("Create Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() {'" + this.fileWorkersPool.toString() + "}'");
     }
 
     public Future<File> getWorkerFuture(File parentFile, long length, long fromFileOffset, long toFileOffset, File childFile) throws IOException {
         FilesDTO filesDTO = new FilesDTO(parentFile, childFile, fromFileOffset, toFileOffset, length);
+        logger.debug("Submit new task in work thread pool to read data from '" +parentFile.getName() + "' and write into '" + childFile.getName() + "'");
         return fileWorkersPool.submit(new FileTransfer(filesDTO, statisticService, logger), filesDTO.getFileToWrite());
     }
 
@@ -50,17 +52,19 @@ public class FileService {
         long totalSize = calculateTotalSize(files);
         statisticService.initStatistic(totalSize);
         String originalFilePath = files.get(0).getParent() + "/" + FileProvider.SOURCE_FILENAME + "." + FilenameUtils.getExtension(files.get(0).getName());
+        logger.debug("Create original file '" + originalFilePath  + "' and set the file length("+ totalSize +" bytes) as total size in statistic");
         return fileProvider.createFile(originalFilePath, totalSize);
     }
 
     public File getOriginalFile(String filePath) throws FileNotFoundException{
         File file = fileProvider.getFile(filePath);
         statisticService.initStatistic(file.length());
+        logger.debug("Find some file '" + file.getName() + "' and set the file length("+ file.length() +" bytes) as total size in statistic");
         return file;
     }
 
     public List<File> getSplitFilesList(String directoryPath) throws FileNotFoundException {
-        logger.debug("Parsing files in the directory path");
+        logger.debug("Parsing files in the directory of path: '" + directoryPath + "'");
         File directory = fileProvider.getDirectory(directoryPath);
         File[] files = directory.listFiles();
         if (files != null) {
@@ -71,6 +75,7 @@ public class FileService {
     }
 
     public void shutdownThreadPools() {
+        logger.info("Shutdown work thread pool: {" + fileWorkersPool.toString() + "} and statistic thread pool: {" + statisticService.getStatisticsPool()+ "}" );
         fileWorkersPool.shutdown();
         statisticService.getStatisticsPool().shutdown();
     }
@@ -87,6 +92,7 @@ public class FileService {
         for (File file : files) {
             totalSize += file.length();
         }
+        logger.debug("Calculate total file size from List<File> files. Files quantity= '" + files.size() + "Total file size = " + totalSize + "bytes'");
         return totalSize;
     }
 }

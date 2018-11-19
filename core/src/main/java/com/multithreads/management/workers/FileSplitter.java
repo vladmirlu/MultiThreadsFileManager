@@ -1,6 +1,7 @@
 package com.multithreads.management.workers;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,13 @@ import java.util.concurrent.Future;
  */
 public class FileSplitter {
 
-    public FileSplitter() {
+    /**
+     * Root logger.
+     */
+    private final Logger logger;
 
+    public FileSplitter() {
+       this.logger = Logger.getLogger(FileSplitter.class);
     }
 
     /**
@@ -29,7 +35,7 @@ public class FileSplitter {
     public List<Future<File>> split(String filePath, String partFileSize, FileService fileService) throws IOException {
 
         File file = fileService.getOriginalFile(filePath);
-
+        logger.debug("Find original file '" + file.getName() + "' to split it into parts. The part file size = " + partFileSize);
         long splitFileLength = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
         long bytesLeftAmount = file.length() % splitFileLength;
         long partsQuantity = (file.length() - bytesLeftAmount) / splitFileLength;
@@ -40,11 +46,13 @@ public class FileSplitter {
             File partFile = new File(file.getParent() + "/split/" + i + "." + FilenameUtils.getExtension(file.getName()));
             Future<File> f = fileService.getWorkerFuture(file, splitFileLength, i * splitFileLength, 0, partFile);
             futures.add(f);
+            logger.debug("Creating Future<File> to write data from '" + file.getName() + "' into split part file '" + partFile.getName() + "'");
         }
         if (bytesLeftAmount > 0) {
             File partFile = new File(file.getParent() + "/split/" + partsQuantity + "." + FilenameUtils.getExtension(file.getName()));
             Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount, file.length() - bytesLeftAmount, 0, partFile);
             futures.add(f);
+            logger.debug("Creating Future<File> to write data '" + file.getName() + "' into split part file '" + partFile.getName() + "'");
         }
         return futures;
     }

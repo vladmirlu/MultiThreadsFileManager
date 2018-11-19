@@ -22,7 +22,7 @@ public class Communicator {
 
     public Communicator(Logger logger){
         this.logger = logger;
-        this.fileService = new FileService();
+        this.fileService = new FileService(logger);
     }
 
     /**
@@ -36,13 +36,16 @@ public class Communicator {
                     openConsole();
         } catch (InvalidCommandException i){
             i.printStackTrace();
+            logger.error("Invalid command. " + i.getMessage());
             openConsole();
         } catch (IOException ex) {
             ex.printStackTrace();
+            logger.error("IOException: " + ex.getMessage());
             openConsole();
         }
         finally {
             fileService.shutdownThreadPools();
+            logger.info("Program finished " + this);
             System.out.println("good bye");
         }
     }

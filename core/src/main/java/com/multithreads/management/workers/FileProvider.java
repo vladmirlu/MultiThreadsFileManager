@@ -46,7 +46,7 @@ public class FileProvider {
           return directory;
       }
       else{
-          logger.warn("Parsing files in the directory path");
+          logger.warn("The directory '" + directoryPath + "'not found! Parsing files in the directory of default path");
           return new File (RB.getString("splitFileDirectory"));
       }
     }
@@ -70,6 +70,7 @@ public class FileProvider {
      */
     public File createFile(String filePath, long size) throws IOException {
         File file = new File(filePath);
+        logger.debug("Create new file '"+ filePath +"' and set file size of: " + size + " bytes");
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
         long restToRead = size;
 

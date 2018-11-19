@@ -39,7 +39,7 @@ public class FileTransfer implements Runnable {
             fileToRead.seek(filesDTO.getFileToReadOffset());
             fileToWrite.seek(filesDTO.getFileToWriteOffset());
 
-            logger.info("File Transfer started." + this);
+            logger.info("FileTransfer started " + this);
             long toWriteLength = filesDTO.getFileWriteLength();
             long bufferSize = FileProvider.BUFFER_SIZE;
             long completed = 0;
@@ -80,7 +80,7 @@ public class FileTransfer implements Runnable {
     private long copyFile(RandomAccessFile fileToRead, RandomAccessFile fileToWrite, long bufferSize) throws IOException {
         byte[] buffer = new byte[(int) bufferSize];
         long startTime = System.nanoTime();
-        logger.debug("Start Time: " + startTime + this);
+        logger.debug("Copy file: start time = " + startTime + this);
 
         fileToRead.read(buffer);
         fileToWrite.write(buffer);
@@ -88,7 +88,7 @@ public class FileTransfer implements Runnable {
         fileToWrite.seek(fileToWrite.getFilePointer());
 
         long endTime = System.nanoTime();
-        logger.debug("End Time: " + endTime + this);
+        logger.debug("Copy file: end time = " + endTime + this);
         return endTime - startTime;
     }
 

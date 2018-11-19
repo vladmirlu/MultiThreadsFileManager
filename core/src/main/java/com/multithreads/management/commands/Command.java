@@ -65,6 +65,6 @@ public enum Command {
                 return command;
             }
         }
-        throw new InvalidCommandException("Error! Invalid command!");
+        throw new InvalidCommandException("Error! Invalid command: '" + symbol + "'");
     }
 }

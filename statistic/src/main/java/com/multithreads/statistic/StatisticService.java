@@ -2,8 +2,10 @@ package com.multithreads.statistic;
 
 import org.apache.log4j.Logger;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -15,8 +17,8 @@ public class StatisticService {
 
     public StatisticService(){
 
-        tasksTracker = new TasksTracker();
-        logger = Logger.getRootLogger();
+        logger = Logger.getLogger(StatisticService.class);
+        tasksTracker = new TasksTracker(logger);
     }
     /**
      * Statistics thread pool.
@@ -31,7 +33,18 @@ public class StatisticService {
     public void trackTaskProcess(long completed, String threadName, long time){
 
              tasksTracker.fillAllThreadsReports(completed, threadName, time);
-             statisticsPool.submit(new ProcessPrinter(tasksTracker, logger));
+             try {
+                 Future<String> future = statisticsPool.submit(new ProgressBuilder(tasksTracker, logger));
+                     System.out.println(future.get());
+                     logger.debug("Print the result of thread '" + threadName );
+
+             } catch (InterruptedException e) {
+                 logger.error("catch InterruptedException " + threadName );
+                 throw new RuntimeException(e.getMessage());
+             }catch (ExecutionException e){
+                 logger.error("catch ExecutionException " + threadName );
+                 e.printStackTrace();
+             }
     }
 
     public ExecutorService getStatisticsPool() {
@@ -40,5 +53,7 @@ public class StatisticService {
 
     public void initStatistic(long totalSize) {
         tasksTracker.initAllReports(totalSize);
+        logger.info("Init statistic with total file size of " + totalSize + "bytes");
     }
+
 }
