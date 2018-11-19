@@ -11,28 +11,34 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 /**
- * Merge commands.
+ * Executor to merge files into one original file.
  */
 public class FileMerger {
 
     /**
-     * Root logger.
+     * FileMerger logger.
      */
     private final Logger logger;
 
-   public FileMerger(){
-       this.logger = Logger.getLogger(FileMerger.class);
-   }
     /**
-     * Merges files.
-     *
-     * @return list with merged file
-     * @throws IOException             if an I/O error occurs
+     * create new file merger object and initialise logger
      */
-    public List<Future<File>> merge(String directoryPath, FileService fileService) throws IOException{
+    public FileMerger() {
+        this.logger = Logger.getLogger(FileMerger.class);
+    }
 
-        List<File> files = fileService.getSplitFilesList(directoryPath);
-        File originalFile = fileService.createOriginalFile(files);
+    /**
+     * Collect split files, send them to Future to merge into one original file.
+     *
+     * @param directoryPath the directory path when are located split files
+     * @param fileService   service to make multi threads file merging
+     * @return list Future<File> file merging tasks
+     * @throws IOException when the IOException occurs during file work
+     */
+    public List<Future<File>> merge(String directoryPath, FileService fileService) throws IOException {
+
+        List<File> files = fileService.findSplitFilesList(directoryPath);
+        File originalFile = fileService.createOriginalFileClone(files);
         logger.debug("Creating original file '" + originalFile.getName() + "' from split parts. Parts quantity = " + files.size());
         files.sort(Comparator.comparingInt(o -> Integer.parseInt(FilenameUtils.getBaseName(o.getName()))));
 
@@ -41,13 +47,13 @@ public class FileMerger {
 
         for (int i = 0; i < count; i++) {
             long num = Integer.parseInt(FilenameUtils.getBaseName(files.get(i).getName()));
-            Future<File> future = fileService.getWorkerFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile);
+            Future<File> future = fileService.createTaskFuture(files.get(i), files.get(i).length(), 0, num * files.get(i).length(), originalFile);
             futures.add(future);
             logger.debug("Creating Future<File> to merge data from '" + files.get(i).getName() + "' to '" + originalFile.getName());
         }
         if (count == files.size() - 1) {
             long totalSize = fileService.calculateTotalSize(files);
-            Future<File> future = fileService.getWorkerFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile);
+            Future<File> future = fileService.createTaskFuture(files.get(files.size() - 1), files.get(files.size() - 1).length(), 0, totalSize - files.get(files.size() - 1).length(), originalFile);
             futures.add(future);
             logger.debug("Creating Future<File> to merge data from '" + files.get(files.size() - 1) + "' to '" + originalFile.getName());
         }

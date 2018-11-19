@@ -2,6 +2,9 @@ package com.multithreads.management.model;
 
 import java.io.File;
 
+/**
+ * Files data transfer object to transfer file data into task
+ */
 public class FilesDTO {
 
     /**
@@ -10,38 +13,41 @@ public class FilesDTO {
     private File fileToRead;
 
     /**
-     * FileTransfer destination file.
+     * FileCopyist destination file.
      */
     private File fileToWrite;
 
     /**
      * Pointer offset in the file from which to transfer the bytes.
      */
-    private long fileToReadOffset;
+    private long toReadOffset;
 
-    private long fileToWriteOffset;
+    /**
+     * Pointer offset in the file to write transfer the bytes.
+     */
+    private long toWriteOffset;
 
     /**
      * Number of bytes to transfer.
      */
-    private long fileWriteLength;
+    private long writeLength;
 
     /**
      * Initializes class fields.
      *
-     * @param fileToRead       file from which to transfer the bytes
-     * @param fileToReadOffset pointer offset in the file from which to transfer the bytes
-     * @param fileWriteLength         number of bytes to transfer
-     * @param fileToWrite         transfer destination file
-     * @param fileToWriteOffset   pointer offset in the transfer destination file
+     * @param fileToRead    file from which to transfer the bytes
+     * @param toReadOffset  pointer offset in the file from which to transfer the bytes
+     * @param writeLength   number of bytes to transfer
+     * @param fileToWrite   transfer destination file
+     * @param toWriteOffset pointer offset in the transfer destination file
      */
-   public FilesDTO(File fileToRead, File fileToWrite, long fileToReadOffset, long fileToWriteOffset, long fileWriteLength){
+    public FilesDTO(File fileToRead, File fileToWrite, long toReadOffset, long toWriteOffset, long writeLength) {
 
-           this.fileToRead = fileToRead;
-           this.fileToWrite = fileToWrite;
-           this.fileWriteLength = fileWriteLength;
-           this.fileToReadOffset = fileToReadOffset;
-           this.fileToWriteOffset = fileToWriteOffset;
+        this.fileToRead = fileToRead;
+        this.fileToWrite = fileToWrite;
+        this.writeLength = writeLength;
+        this.toReadOffset = toReadOffset;
+        this.toWriteOffset = toWriteOffset;
     }
 
     public File getFileToRead() {
@@ -53,16 +59,16 @@ public class FilesDTO {
     }
 
 
-    public long getFileToReadOffset() {
-        return fileToReadOffset;
+    public long getToReadOffset() {
+        return toReadOffset;
     }
 
-    public long getFileToWriteOffset() {
-        return fileToWriteOffset;
+    public long getToWriteOffset() {
+        return toWriteOffset;
     }
 
-    public long getFileWriteLength() {
-        return fileWriteLength;
+    public long getWriteLength() {
+        return writeLength;
     }
 
 }

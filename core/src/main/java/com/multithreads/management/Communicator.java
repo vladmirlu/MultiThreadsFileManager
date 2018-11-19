@@ -18,23 +18,31 @@ public class Communicator {
      */
     private final Logger logger;
 
+    /**
+     * Service to work with file operations
+     */
     private final FileService fileService;
 
-    public Communicator(Logger logger){
+    /**
+     * Build new communicator to interact with with user via console
+     *
+     * @param logger entity for logging the process
+     */
+    public Communicator(Logger logger) {
         this.logger = logger;
         this.fileService = new FileService(logger);
     }
 
     /**
-     * Interacts with user.
+     * Interacts with user, receives data from console and transmit it into program
      */
     public void openConsole() {
         Scanner scanner = new Scanner(System.in);
         try {
             Command command = Command.chooseCommand(scanner);
-                    System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
-                    openConsole();
-        } catch (InvalidCommandException i){
+            System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
+            openConsole();
+        } catch (InvalidCommandException i) {
             i.printStackTrace();
             logger.error("Invalid command. " + i.getMessage());
             openConsole();
@@ -42,11 +50,10 @@ public class Communicator {
             ex.printStackTrace();
             logger.error("IOException: " + ex.getMessage());
             openConsole();
-        }
-        finally {
+        } finally {
             fileService.shutdownThreadPools();
             logger.info("Program finished " + this);
-            System.out.println("good bye");
+            System.out.println("Good bye");
         }
     }
 }

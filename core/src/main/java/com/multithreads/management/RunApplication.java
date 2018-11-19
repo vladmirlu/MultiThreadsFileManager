@@ -15,18 +15,18 @@ public class RunApplication {
 
     /**
      * Start point of the application.
+     *
      * @param args arguments
      */
     public static void main(String[] args) {
-            try {
-                Communicator communicator = new Communicator(logger);
-                PropertyConfigurator.configure("core/src/main/resources/application.properties");
-                logger.info("Main method started. " + communicator.toString());
-                communicator.openConsole();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
+        try {
+            Communicator communicator = new Communicator(logger);
+            PropertyConfigurator.configure("core/src/main/resources/log4j.properties");
+            logger.info("Main method started. " + communicator.toString());
+            communicator.openConsole();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

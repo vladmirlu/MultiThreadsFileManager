@@ -1,4 +1,5 @@
 package com.multithreads.statistic;
+
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.Callable;
@@ -14,43 +15,43 @@ public class ProgressBuilder implements Callable {
     private final Logger logger;
 
     /**
-     * Tool for interaction with the src.main.java.statistics module.
+     * Entity to adjust reports during statistic process
      */
-    private TasksTracker tasksTracker;
+    private ReportsAdjuster reportsAdjuster;
 
-    private int totalProgress;
     /**
-     * Initializes tasksTracker and commands fields.
-     *
-     * @param tasksTracker tool for interaction with the src.main.java.statistics module
+     * total progress in percentage
      */
-    public ProgressBuilder(TasksTracker tasksTracker, Logger logger) {
-        this.tasksTracker = tasksTracker;
+    private int totalProgress;
+
+    /**
+     * Builds new process builder, initializes reports adjuster and logger.
+     *
+     * @param reportsAdjuster adjust reports during statistic process
+     * @param logger          logs the statistic process
+     */
+    public ProgressBuilder(ReportsAdjuster reportsAdjuster, Logger logger) {
+        this.reportsAdjuster = reportsAdjuster;
         this.logger = logger;
     }
 
     /**
-     * Executes ProgressBuilder.
+     * Executes progress builder.
      */
     @Override
-    public String call(){
-        try{
-            Thread.sleep(1);
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
+    public String call() {
 
         logger.trace("Process building started." + this);
-        totalProgress = calculateProgress(tasksTracker.getCommonReport().getCompleted(), tasksTracker.getCommonReport().getTotal());
+        totalProgress = calculateProgress(reportsAdjuster.getCommonReport().getCopiedBytes(), reportsAdjuster.getCommonReport().getTotalBytes());
 
-            StringBuilder progressBuilder = new StringBuilder();
-            progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
-            tasksTracker.getAllThreadsReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
-                    .append(calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
-                    .append("Spent time: ").append(taskReport.getSpentTimeNanoSec()).append("ns. "));
-            progressBuilder.append("Total spent time: ").append(tasksTracker.getCommonReport().getSpentTimeNanoSec()).append("ns ");
-            logger.trace("Process printer finished." + this);
-            return progressBuilder.toString();
+        StringBuilder progressBuilder = new StringBuilder();
+        progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
+        reportsAdjuster.getAllThreadsReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
+                .append(calculateProgress(taskReport.getCopiedBytes(), taskReport.getTotalBytes())).append("%, ")
+                .append("Spent time: ").append(taskReport.getSpentNanoTime()).append("ns. "));
+        progressBuilder.append("Total spent time: ").append(reportsAdjuster.getCommonReport().getSpentNanoTime()).append("ns ");
+        logger.trace("Process printer finished." + this);
+        return progressBuilder.toString();
     }
 
     /**
@@ -64,12 +65,15 @@ public class ProgressBuilder implements Callable {
         return Math.round((float) completed / total * 100);
     }
 
+    /**
+     * Build override toString() method to print current task in readable format
+     */
     @Override
     public String toString() {
         return new StringBuilder().append("ProgressBuilder { ").append("thread name = '")
                 .append(Thread.currentThread().getName()).append('\'').append(", common progress = ")
                 .append(totalProgress).append('\'').append(", spent time = ")
-                .append(tasksTracker.getCommonReport().getSpentTimeNanoSec()).append("ns. ").append('\'')
+                .append(reportsAdjuster.getCommonReport().getSpentNanoTime()).append("ns. ").append('\'')
                 .append('}').toString();
     }
 }

@@ -1,51 +1,59 @@
 package com.multithreads.statistic.model;
 
 /**
- * Report about completed and total tasks.
+ * Report about copiedBytes and totalBytes tasks and spent time.
  */
 public class TaskReport {
 
-    private volatile long completed;
+    /**
+     * Quantity of copied bytes
+     */
+    private volatile long copiedBytes;
 
-    private volatile long total;
+    /**
+     * Total bytes quantity
+     */
+    private volatile long totalBytes;
 
     /**
      * Time to do buffer tasks (in nanoseconds).
      */
-    private volatile long spentTimeNanoSec;
+    private volatile long spentNanoTime;
 
     /**
-     * Initializes completed and total tasks fields.
+     * Initializes copiedBytes, totalBytes and spentNanoTime for task.
      *
-     * @param completed completed tasks
-     * @param total total tasks
+     * @param copiedBytes   copied bytes quantity
+     * @param totalBytes    total bytes quantity
+     * @param spentNanoTime spent time in nanoseconds
      */
-    public TaskReport(long completed, long total, long spentTimeNanoSec) {
-        this.completed = completed;
-        this.total = total;
-        this.spentTimeNanoSec = spentTimeNanoSec;
+    public TaskReport(long copiedBytes, long totalBytes, long spentNanoTime) {
+        this.copiedBytes = copiedBytes;
+        this.totalBytes = totalBytes;
+        this.spentNanoTime = spentNanoTime;
     }
 
-    public long getSpentTimeNanoSec() {
-        return spentTimeNanoSec;
+    public long getSpentNanoTime() {
+        return spentNanoTime;
     }
 
-    public long getCompleted() {
-        return completed;
+    public long getCopiedBytes() {
+        return copiedBytes;
     }
 
-    public long getTotal() {
-        return total;
+    public long getTotalBytes() {
+        return totalBytes;
     }
 
-    public void setCompleted(long completed) {
-        this.completed = completed;
+    public void setCopiedBytes(long copiedBytes) {
+        this.copiedBytes = copiedBytes;
     }
 
-    public void setTotal(long total) {
-        this.total = total;
+    public void setTotalBytes(long totalBytes) {
+        this.totalBytes = totalBytes;
     }
-    public void setSpentTimeNanoSec(long spentTimeNanoSec) {
-        this.spentTimeNanoSec = spentTimeNanoSec;
+
+    public void setSpentNanoTime(long spentNanoTime) {
+        this.spentNanoTime = spentNanoTime;
     }
 }

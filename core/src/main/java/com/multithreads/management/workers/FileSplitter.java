@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 /**
- * Split commands.
+ * Executor to split files into one original file.
  */
 public class FileSplitter {
 
@@ -22,19 +22,24 @@ public class FileSplitter {
      */
     private final Logger logger;
 
+    /**
+     * create new file splitter object and initialise logger
+     */
     public FileSplitter() {
-       this.logger = Logger.getLogger(FileSplitter.class);
+        this.logger = Logger.getLogger(FileSplitter.class);
     }
 
     /**
-     * Splits file.
+     * Splits file into parts.
      *
-     * @return list of files
-     * @throws IOException if an I/O error occurs
+     * @param filePath    the file to split path
+     * @param fileService service to make multi threads file merging
+     * @return list Future<File> file splitting tasks
+     * @throws IOException when the IOException occurs during file work
      */
     public List<Future<File>> split(String filePath, String partFileSize, FileService fileService) throws IOException {
 
-        File file = fileService.getOriginalFile(filePath);
+        File file = fileService.findExistingFile(filePath);
         logger.debug("Find original file '" + file.getName() + "' to split it into parts. The part file size = " + partFileSize);
         long splitFileLength = file.length() <= Long.parseLong(partFileSize) ? file.length() : Long.parseLong(partFileSize);
         long bytesLeftAmount = file.length() % splitFileLength;
@@ -44,13 +49,13 @@ public class FileSplitter {
         Files.createDirectory(Paths.get(file.getParent() + "/split"));
         for (long i = 0; i < partsQuantity; i++) {
             File partFile = new File(file.getParent() + "/split/" + i + "." + FilenameUtils.getExtension(file.getName()));
-            Future<File> f = fileService.getWorkerFuture(file, splitFileLength, i * splitFileLength, 0, partFile);
+            Future<File> f = fileService.createTaskFuture(file, splitFileLength, i * splitFileLength, 0, partFile);
             futures.add(f);
             logger.debug("Creating Future<File> to write data from '" + file.getName() + "' into split part file '" + partFile.getName() + "'");
         }
         if (bytesLeftAmount > 0) {
             File partFile = new File(file.getParent() + "/split/" + partsQuantity + "." + FilenameUtils.getExtension(file.getName()));
-            Future<File> f = fileService.getWorkerFuture(file, bytesLeftAmount, file.length() - bytesLeftAmount, 0, partFile);
+            Future<File> f = fileService.createTaskFuture(file, bytesLeftAmount, file.length() - bytesLeftAmount, 0, partFile);
             futures.add(f);
             logger.debug("Creating Future<File> to write data '" + file.getName() + "' into split part file '" + partFile.getName() + "'");
         }
