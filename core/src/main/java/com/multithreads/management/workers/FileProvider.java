@@ -37,7 +37,7 @@ public class FileProvider {
      *
      * @param logger logging object
      */
-    FileProvider(Logger logger) {
+    public FileProvider(Logger logger) {
         this.logger = logger;
         String resourcesPath = "core/src/main/resources/application.properties";
         try {

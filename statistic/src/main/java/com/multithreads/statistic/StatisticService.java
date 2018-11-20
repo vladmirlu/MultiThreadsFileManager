@@ -1,7 +1,6 @@
 package com.multithreads.statistic;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +22,6 @@ public class StatisticService {
      * Build new service to make statistic
      */
     public StatisticService() {
-        PropertyConfigurator.configure("statistic/src/main/resources/log4j.properties");
         logger = Logger.getLogger(StatisticService.class);
         reportsAdjuster = new ReportsAdjuster(logger);
     }
