@@ -20,8 +20,11 @@ public class RunApplication {
      */
     public static void main(String[] args) {
         try {
-            Communicator communicator = new Communicator(logger);
-            PropertyConfigurator.configure("core/src/main/resources/log4j.properties");
+            String resourcesPath = "core/src/main/resources/application.properties";
+            String log4jResourcesPath = "core/src/main/resources/log4j.properties";
+
+            Communicator communicator = new Communicator(logger, resourcesPath);
+            PropertyConfigurator.configure(log4jResourcesPath);
             logger.info("Main method started. " + communicator.toString());
             communicator.openConsole();
         } catch (Exception e) {

@@ -28,9 +28,9 @@ public class Communicator {
      *
      * @param logger entity for logging the process
      */
-    public Communicator(Logger logger) {
+    public Communicator(Logger logger, String resourcesPath) {
         this.logger = logger;
-        this.fileService = new FileService(logger);
+        this.fileService = new FileService(logger, resourcesPath);
     }
 
     /**

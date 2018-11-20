@@ -24,7 +24,7 @@ public class CommunicatorTest {
     @Mock
     private FileService fileService;
 
-    private FileProvider fileProvider = new FileProvider(Logger.getRootLogger());
+  /*  private FileProvider fileProvider = new FileProvider(Logger.getRootLogger());*/
 
     @Mock
     private ResourceBundle resourceBundle;
@@ -35,10 +35,10 @@ public class CommunicatorTest {
     @Before
     public  void  setUp() throws IOException {
 
-        //MockitoAnnotations.initMocks(communicator);
+      /*  //MockitoAnnotations.initMocks(communicator);
         when(fileService.createTaskFuture(null, 0, 0, 0, null)).thenReturn(null);
         when(fileProvider.getDirectory("")).thenReturn(null);
-        when(fileProvider.getFile("")).thenReturn(null);
+        when(fileProvider.getFile("")).thenReturn(null);*/
     }
 
     @Test

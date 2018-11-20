@@ -42,9 +42,9 @@ public class FileService {
      *
      * @param logger object for logging th e process
      */
-    public FileService(Logger logger) {
+    public FileService(Logger logger, String resourcePath) {
         this.logger = logger;
-        this.fileProvider = new FileProvider(logger);
+        this.fileProvider = new FileProvider(logger, resourcePath);
         this.statisticService = new StatisticService();
         this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         this.logger.debug("Create Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() {'" + this.fileWorkersPool.toString() + "}'");

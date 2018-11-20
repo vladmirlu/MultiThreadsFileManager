@@ -30,19 +30,18 @@ public class FileProvider {
     /**
      * Object to get data from the application properties file
      */
-    private ResourceBundle RB;
+    private ResourceBundle resourceBundle;
 
     /**
      * Build new file provider init logger and create resource bundle from the properties file
      *
      * @param logger logging object
      */
-    public FileProvider(Logger logger) {
+    public FileProvider(Logger logger, String resourcesPath) {
         this.logger = logger;
-        String resourcesPath = "core/src/main/resources/application.properties";
         try {
             FileInputStream fis = new FileInputStream(resourcesPath);
-            this.RB = new PropertyResourceBundle(fis);
+            this.resourceBundle = new PropertyResourceBundle(fis);
         } catch (MissingResourceException m) {
             m.printStackTrace();
             logger.error("Resource is missing: " + resourcesPath);
@@ -64,7 +63,7 @@ public class FileProvider {
             return directory;
         } else {
             logger.warn("The directory '" + directoryPath + "'not found! Parsing files in the directory of default path");
-            return new File(RB.getString("splitFileDirectory"));
+            return new File(resourceBundle.getString("splitFilesDirectory"));
         }
     }
 
