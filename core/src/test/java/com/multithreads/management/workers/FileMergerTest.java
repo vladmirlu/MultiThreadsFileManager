@@ -1,5 +1,5 @@
-import com.multithreads.management.workers.FileMerger;
-import com.multithreads.management.workers.FileService;
+package com.multithreads.management.workers;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Future;
 
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileMergerTest {
