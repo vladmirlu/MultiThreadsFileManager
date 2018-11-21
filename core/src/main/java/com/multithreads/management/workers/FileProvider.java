@@ -25,7 +25,7 @@ public class FileProvider {
     /**
      * Root logger
      */
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger(FileProvider.class);
 
     /**
      * Object to get data from the application properties file
@@ -33,21 +33,18 @@ public class FileProvider {
     private ResourceBundle resourceBundle;
 
     /**
-     * Build new file provider init logger and create resource bundle from the properties file
-     *
-     * @param logger logging object
+     * Build new file provider and create resource bundle from the properties file
      */
-    public FileProvider(Logger logger, String resourcesPath) {
-        this.logger = logger;
+    public FileProvider(String resourcesPath) {
         try {
             FileInputStream fis = new FileInputStream(resourcesPath);
             this.resourceBundle = new PropertyResourceBundle(fis);
         } catch (MissingResourceException m) {
             m.printStackTrace();
-            logger.error("Resource is missing: " + resourcesPath);
+            logger.error("Resource is missing: " + resourcesPath + "MissingResourceException occur: " + m.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error("IOException is occur during reading resources from the file" + resourcesPath);
+            logger.error("IOException is occur during reading resources from the file '" + resourcesPath + "'; "+ e.getMessage());
         }
     }
 

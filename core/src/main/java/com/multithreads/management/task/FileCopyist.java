@@ -25,22 +25,20 @@ public class FileCopyist implements Runnable {
     private final FilesDTO filesDTO;
 
     /**
-     * Root logger
+     * Object for logging the process
      */
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger(FileCopyist.class);
 
     /**
      * Build new task
      *
      * @param filesDTO         files data transfer object
      * @param statisticService object to make statistic process
-     * @param logger           object to write logs during the time when the task is running
      */
-    public FileCopyist(FilesDTO filesDTO, StatisticService statisticService, Logger logger) {
+    public FileCopyist(FilesDTO filesDTO, StatisticService statisticService) {
 
         this.filesDTO = filesDTO;
         this.statisticService = statisticService;
-        this.logger = logger;
     }
 
     /**
@@ -48,62 +46,67 @@ public class FileCopyist implements Runnable {
      */
     @Override
     public void run() {
-        try {
-            RandomAccessFile fileToRead = new RandomAccessFile(filesDTO.getFileToRead(), "r");
-            RandomAccessFile fileToWrite = new RandomAccessFile(filesDTO.getFileToWrite(), "rw");
-            fileToRead.seek(filesDTO.getToReadOffset());
-            fileToWrite.seek(filesDTO.getToWriteOffset());
 
-            logger.info("FileCopyist started " + this);
-            long toWriteLength = filesDTO.getWriteLength();
+        logger.info("FileCopyist started " + this);
+        try {
+            logger.debug("Input data the FileDTO: " + filesDTO.toString());
+            RandomAccessFile fileRead = new RandomAccessFile(filesDTO.getFileRead(), "r");
+            RandomAccessFile fileWrite = new RandomAccessFile(filesDTO.getFileWrite(), "rw");
+            fileRead.seek(filesDTO.getReadOffset());
+            fileWrite.seek(filesDTO.getWriteOffset());
+            logger.debug("File to read offset = " + fileRead.getFilePointer() + "File to write offset = " + fileWrite.getFilePointer());
+
+            long writeLength = filesDTO.getWriteLength();
             long bufferSize = FileProvider.BUFFER_SIZE;
             long completed = 0;
             long spentTime;
-            while (toWriteLength > 0) {
+            while (writeLength > 0) {
 
-                if (bufferSize >= toWriteLength) {
-                    logger.debug("Buffer Size >= File to write length . File pointer = " + fileToRead.getFilePointer() + this);
-                    spentTime = copyFile(fileToRead, fileToWrite, toWriteLength);
-                    completed += toWriteLength;
-                    toWriteLength = 0;
+                if (bufferSize >= writeLength) {
+                    logger.debug("Buffer Size >= File to write length . File pointer = " + fileRead.getFilePointer() + this);
+                    spentTime = copyFile(fileRead, fileWrite, writeLength);
+                    completed += writeLength;
+                    writeLength = 0;
                 } else {
-                    logger.debug("Buffer Size < File to write length. File pointer = " + fileToRead.getFilePointer() + this);
-                    spentTime = copyFile(fileToRead, fileToWrite, bufferSize);
-                    toWriteLength -= bufferSize;
+                    logger.debug("Buffer Size < File to write length. File pointer = " + fileRead.getFilePointer() + this);
+                    spentTime = copyFile(fileRead, fileWrite, bufferSize);
+                    writeLength -= bufferSize;
                     completed += bufferSize;
                 }
-                statisticService.trackTasksProgress(completed, Thread.currentThread().getName(), spentTime);
+                logger.info("Statistic started: copiedBytes= " + completed + "spentNanoTime=" + spentTime);
+                statisticService.trackTaskProgress(completed, Thread.currentThread().getName(), spentTime);
             }
-            fileToRead.close();
-            fileToWrite.close();
+            fileRead.close();
+            fileWrite.close();
         } catch (IOException ex) {
+            logger.error("IOException occur: " + ex.getMessage());
             throw new RuntimeException(ex.getMessage());
         } finally {
-            logger.trace("FileCopyist completed." + this);
+            logger.info("FileCopyist completed. " + this);
         }
     }
 
     /**
      * Reading and writing buffer bytes from one file to another.
      *
-     * @param fileToRead  random access file to read bytes from itself
-     * @param fileToWrite random access file to write bytes into itself
+     * @param fileRead  random access file to read bytes from itself
+     * @param fileWrite random access file to write bytes into itself
      * @param bufferSize  size of transfer buffer
      * @return spent time on copying files in nanoseconds
      * @throws IOException when the files copying process crashes
      */
-    private long copyFile(RandomAccessFile fileToRead, RandomAccessFile fileToWrite, long bufferSize) throws IOException {
+    private long copyFile(RandomAccessFile fileRead, RandomAccessFile fileWrite, long bufferSize) throws IOException {
         byte[] buffer = new byte[(int) bufferSize];
         long startTime = System.nanoTime();
-        logger.debug("Copy file: start time = " + startTime + this);
+        logger.debug("Copy file: fileReadPointer= " + fileRead.getFilePointer()+ "bytes; fileWritePointer = "+ fileWrite +  "bytes; start time = " + startTime);
 
-        fileToRead.read(buffer);
-        fileToWrite.write(buffer);
-        fileToRead.seek(fileToRead.getFilePointer());
-        fileToWrite.seek(fileToWrite.getFilePointer());
+        fileRead.read(buffer);
+        fileWrite.write(buffer);
+        fileRead.seek(fileRead.getFilePointer());
+        fileWrite.seek(fileWrite.getFilePointer());
 
         long endTime = System.nanoTime();
-        logger.debug("Copy file: end time = " + endTime + this);
+        logger.debug("Copy file: fileReadPointer= " + fileRead.getFilePointer()+ "bytes; fileWritePointer = "+ fileWrite +  "bytes; end time = " + endTime);
         return endTime - startTime;
     }
 
@@ -112,13 +115,13 @@ public class FileCopyist implements Runnable {
      */
     @Override
     public String toString() {
-        return new StringBuilder().append("FileCopyist { ").append("thread name: '").append(Thread.currentThread().getName())
-                .append('\'').append(", file to read: ").append(filesDTO.getFileToRead())
-                .append(", file to read offset = ").append(filesDTO.getToReadOffset())
-                .append(", file to write: ").append(filesDTO.getFileToWrite())
-                .append(", file to write offset:").append(filesDTO.getToWriteOffset())
-                .append(", write file length = ").append(filesDTO.getWriteLength())
-                .append(", user command: '").append(filesDTO.getToWriteOffset() == 0 ? Command.SPLIT.name() : Command.MERGE.name()).append('\'')
+        return new StringBuilder().append(" FileCopyist -> work data: { ")
+                .append('\'').append("File fileRead: ").append(filesDTO.getFileRead())
+                .append(", long readOffset = ").append(filesDTO.getReadOffset())
+                .append(", File fileWrite ").append(filesDTO.getFileWrite())
+                .append(", long writeOffset:").append(filesDTO.getWriteOffset())
+                .append(", writeLength = ").append(filesDTO.getWriteLength())
+                .append(", command = '").append(filesDTO.getWriteOffset() == 0 ? Command.SPLIT.name() : Command.MERGE.name()).append('\'')
                 .append('}').toString();
     }
 }

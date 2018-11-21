@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +19,7 @@ public class FileService {
     /**
      * Root logger.
      */
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger(FileService.class);
 
     /**
      * File workers thread pool.
@@ -40,12 +39,11 @@ public class FileService {
     /**
      * Build service of multi threads files management
      *
-     * @param logger object for logging th e process
      */
-    public FileService(Logger logger, String resourcePath) {
-        this.logger = logger;
-        this.fileProvider = new FileProvider(logger, resourcePath);
-        this.statisticService = new StatisticService();
+    public FileService(String resourcePath) {
+
+        this.fileProvider = new FileProvider(resourcePath);
+        this.statisticService = new StatisticService(resourcePath);
         this.fileWorkersPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         this.logger.debug("Create Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() {'" + this.fileWorkersPool.toString() + "}'");
     }
@@ -53,17 +51,17 @@ public class FileService {
     /**
      * Create and start new task Future<File>
      *
-     * @param fileToRead    file to read bytes from itself
+     * @param fileToRead    file to read bytes from
      * @param writeLength   writing file length
      * @param toReadOffset  pointer offset in the file from which to transfer the bytes
      * @param toWriteOffset pointer offset in the file to write transfer the bytes
-     * @param fileToWrite   file to write bytes into itself
+     * @param fileToWrite   file to write bytes into
      * @return new created task Future<File>
      */
     public Future<File> createTaskFuture(File fileToRead, long writeLength, long toReadOffset, long toWriteOffset, File fileToWrite) {
         FilesDTO filesDTO = new FilesDTO(fileToRead, fileToWrite, toReadOffset, toWriteOffset, writeLength);
-        logger.debug("Submit new task in work thread pool to read data from '" + fileToRead.getName() + "' and write into '" + fileToWrite.getName() + "'");
-        return fileWorkersPool.submit(new FileCopyist(filesDTO, statisticService, logger), filesDTO.getFileToWrite());
+        logger.debug("Submit new task" + filesDTO.toString() + " in work thread pool");
+        return fileWorkersPool.submit(new FileCopyist(filesDTO, statisticService), filesDTO.getFileWrite());
     }
 
     /**
@@ -133,5 +131,21 @@ public class FileService {
         }
         logger.debug("Calculate total file size from List<File> files. Files quantity= '" + files.size() + "Total file size = " + totalSize + "bytes'");
         return totalSize;
+    }
+/**
+ * Turn on statistic printing
+ * */
+    public void turnOnStatisticPrint(){
+        statisticService.printStatistic();
+    }
+
+    /**
+     *Get readable string of this object
+     *
+     * @return object as string
+     * */
+    @Override
+    public String toString(){
+        return  new StringBuilder().append("FileService: { ").append(this.getClass()).append(", hashCode= ").append(this.hashCode()).toString();
     }
 }

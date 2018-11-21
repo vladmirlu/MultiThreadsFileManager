@@ -18,14 +18,7 @@ public class FileMerger {
     /**
      * FileMerger logger.
      */
-    private final Logger logger;
-
-    /**
-     * create new file merger object and initialise logger
-     */
-    public FileMerger() {
-        this.logger = Logger.getLogger(FileMerger.class);
-    }
+    private final Logger logger = Logger.getLogger(FileMerger.class);
 
     /**
      * Collect split files, send them to Future to merge into one original file.
@@ -57,6 +50,7 @@ public class FileMerger {
             futures.add(future);
             logger.debug("Creating Future<File> to merge data from '" + files.get(files.size() - 1) + "' to '" + originalFile.getName());
         }
+        fileService.turnOnStatisticPrint();
         return futures;
     }
 }

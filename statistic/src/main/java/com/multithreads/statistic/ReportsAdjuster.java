@@ -14,25 +14,24 @@ public class ReportsAdjuster {
     /**
      * Report about completed and total tasks.
      */
-    private final TaskReport commonReport;
+    private final TaskReport generalReport;
 
     /**
      * Entity for logging the process
      */
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger(ReportsAdjuster.class);
 
     /**
      * ConcurrentHashMap to keep each thread progress.
      */
-    private final Map<String, TaskReport> allThreadsReports;
+    private final Map<String, TaskReport> threadReports;
 
     /**
      * Build new adjuster, init all threads reports, common reports and logger
      */
-    ReportsAdjuster(Logger logger) {
-        allThreadsReports = new ConcurrentHashMap<>();
-        commonReport = new TaskReport(0, 0, 0);
-        this.logger = logger;
+    ReportsAdjuster() {
+        threadReports = new ConcurrentHashMap<>();
+        generalReport = new TaskReport(0, 0, 0);
     }
 
     /**
@@ -41,24 +40,27 @@ public class ReportsAdjuster {
      * @param copiedBytes   quantity of copied bytes
      * @param threadName    exact thread name
      * @param spentNanoTime spent time in nanoseconds during copy process
-     * @return true if common quantity of copied bytes is less then total bytes quantity or false if not
+     * @return true if general quantity of copied bytes is less then the total bytes quantity or false if not
      */
-    boolean adjustedThreadReports(long copiedBytes, String threadName, long spentNanoTime) {
+    boolean adjustThreadReports(long copiedBytes, String threadName, long spentNanoTime) {
 
-        if (commonReport.getCopiedBytes() + copiedBytes >= commonReport.getTotalBytes()) {
+        if (generalReport.getCopiedBytes() + copiedBytes >= generalReport.getTotalBytes()) {
             return false;
         }
-        commonReport.setCopiedBytes(commonReport.getCopiedBytes() + copiedBytes);
-        commonReport.setSpentNanoTime(commonReport.getSpentNanoTime() + spentNanoTime);
+        generalReport.setCopiedBytes(generalReport.getCopiedBytes() + copiedBytes);
+        generalReport.setSpentNanoTime(generalReport.getSpentNanoTime() + spentNanoTime);
+        logger.debug("Update data of general task report: " + generalReport.toString());
 
-        if (allThreadsReports.containsKey(threadName)) {
-            TaskReport threadReport = allThreadsReports.get(threadName);
+        TaskReport threadReport;
+        if (threadReports.containsKey(threadName)) {
+            threadReport = threadReports.get(threadName);
             threadReport.setCopiedBytes(threadReport.getCopiedBytes() + copiedBytes);
             threadReport.setSpentNanoTime(threadReport.getSpentNanoTime() + spentNanoTime);
-            logger.debug("Update quantity completed task(" + threadReport.getCopiedBytes() + "bytes) and spent time for thread: '" + threadName + "'");
+            logger.debug("Update data of one thread report" + threadReport.toString() + " for thread: '" + threadName + "'");
         } else {
-            allThreadsReports.put(threadName, new TaskReport(copiedBytes, commonReport.getTotalBytes(), spentNanoTime));
-            logger.debug("Put new TaskReport for thread '" + threadName + "'");
+            threadReport = new TaskReport(copiedBytes, generalReport.getTotalBytes(), spentNanoTime);
+            threadReports.put(threadName, threadReport);
+            logger.debug("Put new TaskReport: " + threadReport.toString() + " for thread '" + threadName + "'");
         }
         return true;
     }
@@ -69,29 +71,29 @@ public class ReportsAdjuster {
      * @param totalBytes total bytes quantity is to be copied
      */
     void initAllReports(long totalBytes) {
-        logger.debug("Set total size of " + totalBytes + "bytes to transfer and reset");
-        allThreadsReports.clear();
-        commonReport.setSpentNanoTime(0);
-        commonReport.setCopiedBytes(0);
-        commonReport.setTotalBytes(totalBytes);
+        logger.debug("Set total size of " + totalBytes + "bytes to transfer and reset other fields");
+        threadReports.clear();
+        generalReport.setSpentNanoTime(0);
+        generalReport.setCopiedBytes(0);
+        generalReport.setTotalBytes(totalBytes);
     }
 
     /**
-     * Gets common report
+     * Gets general report
      *
-     * @return common task report
+     * @return general report of all tasks
      */
-    synchronized TaskReport getCommonReport() {
-        return commonReport;
+    synchronized TaskReport getGeneralReport() {
+        return generalReport;
     }
 
     /**
-     * Gets corresponding tasks reports.
+     * Gets corresponding task reports.
      *
      * @return map of all threads and their reports
      */
-    Map<String, TaskReport> getAllThreadsReports() {
-        return allThreadsReports;
+    Map<String, TaskReport> getThreadReports() {
+        return threadReports;
     }
 
 }

@@ -12,7 +12,7 @@ public class ProgressBuilder implements Callable {
     /**
      * Statistics logger.
      */
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger(ProgressBuilder.class);
 
     /**
      * Entity to adjust reports during statistic process
@@ -28,11 +28,9 @@ public class ProgressBuilder implements Callable {
      * Builds new process builder, initializes reports adjuster and logger.
      *
      * @param reportsAdjuster adjust reports during statistic process
-     * @param logger          logs the statistic process
      */
-    public ProgressBuilder(ReportsAdjuster reportsAdjuster, Logger logger) {
+    public ProgressBuilder(ReportsAdjuster reportsAdjuster) {
         this.reportsAdjuster = reportsAdjuster;
-        this.logger = logger;
     }
 
     /**
@@ -41,16 +39,16 @@ public class ProgressBuilder implements Callable {
     @Override
     public String call() {
 
-        logger.trace("Process building started." + this);
-        totalProgress = calculateProgress(reportsAdjuster.getCommonReport().getCopiedBytes(), reportsAdjuster.getCommonReport().getTotalBytes());
+        logger.info("Start statistic reports building: " + this);
+        totalProgress = calculateProgress(reportsAdjuster.getGeneralReport().getCopiedBytes(), reportsAdjuster.getGeneralReport().getTotalBytes());
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
-        reportsAdjuster.getAllThreadsReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
+        reportsAdjuster.getThreadReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
                 .append(calculateProgress(taskReport.getCopiedBytes(), taskReport.getTotalBytes())).append("%, ")
                 .append("Spent time: ").append(taskReport.getSpentNanoTime()).append("ns. "));
-        progressBuilder.append("Total spent time: ").append(reportsAdjuster.getCommonReport().getSpentNanoTime()).append("ns ");
-        logger.trace("Process printer finished." + this);
+        progressBuilder.append("Total spent time: ").append(reportsAdjuster.getGeneralReport().getSpentNanoTime()).append("ns ");
+        logger.info("End statistic reports building:" + this);
         return progressBuilder.toString();
     }
 
@@ -70,10 +68,9 @@ public class ProgressBuilder implements Callable {
      */
     @Override
     public String toString() {
-        return new StringBuilder().append("ProgressBuilder { ").append("thread name = '")
-                .append(Thread.currentThread().getName()).append('\'').append(", common progress = ")
-                .append(totalProgress).append('\'').append(", spent time = ")
-                .append(reportsAdjuster.getCommonReport().getSpentNanoTime()).append("ns. ").append('\'')
+        return new StringBuilder().append("ProgressBuilder { ").append(",general progress= ")
+                .append(totalProgress).append('\'').append(", spent time= ")
+                .append(reportsAdjuster.getGeneralReport().getSpentNanoTime()).append("ns. ").append('\'')
                 .append('}').toString();
     }
 }

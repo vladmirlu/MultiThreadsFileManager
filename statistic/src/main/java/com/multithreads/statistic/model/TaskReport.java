@@ -56,4 +56,12 @@ public class TaskReport {
     public void setSpentNanoTime(long spentNanoTime) {
         this.spentNanoTime = spentNanoTime;
     }
+
+    @Override
+    public String toString(){
+
+        return  new StringBuilder().append("TaskReport {" ).append("long copiedBytes = ").append(copiedBytes)
+                .append(", long totalBytes").append(totalBytes).append(", long spentNanoTime").append(spentNanoTime)
+                .append("; }").toString();
+    }
 }

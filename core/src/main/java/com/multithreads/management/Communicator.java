@@ -5,8 +5,11 @@ import com.multithreads.management.exception.InvalidCommandException;
 import com.multithreads.management.workers.FileService;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Future;
 
 /**
  * Tool for interaction with user.
@@ -16,7 +19,7 @@ public class Communicator {
     /**
      * Root logger.
      */
-    private final Logger logger;
+    private final Logger logger = Logger.getLogger(Communicator.class);
 
     /**
      * Service to work with file operations
@@ -25,12 +28,10 @@ public class Communicator {
 
     /**
      * Build new communicator to interact with with user via console
-     *
-     * @param logger entity for logging the process
      */
-    public Communicator(Logger logger, String resourcesPath) {
-        this.logger = logger;
-        this.fileService = new FileService(logger, resourcesPath);
+    public Communicator() {
+        String resourcesPath = "core/src/main/resources/application.properties";
+        this.fileService = new FileService(resourcesPath);
     }
 
     /**
@@ -40,7 +41,8 @@ public class Communicator {
         Scanner scanner = new Scanner(System.in);
         try {
             Command command = Command.chooseCommand(scanner);
-            System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
+           // System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
+            List<Future<File>> futures = command.apply(fileService, scanner);
             openConsole();
         } catch (InvalidCommandException i) {
             i.printStackTrace();
@@ -55,5 +57,14 @@ public class Communicator {
             logger.info("Program finished " + this);
             System.out.println("Good bye");
         }
+    }
+
+    /**
+     * Build override toString() method to print Communicator object readable format
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder().append("ConsoleCommunicator { ").append(this.getClass()).append(", hashCode= ")
+                .append(this.hashCode()).append("; ").append(this.fileService.toString()).append(" }").toString();
     }
 }

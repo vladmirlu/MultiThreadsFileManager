@@ -65,10 +65,10 @@ public enum Command {
     }
 
     /**
-     * Abstract method to override by each command
+     * Command action method
      *
      * @param fileService file service to assist of the command process
-     * @param scanner     object to receive data from console
+     * @param scanner object to receive data
      * @return list of collected Future<File>
      * @throws IOException when program goes throw IOException
      */
@@ -83,9 +83,9 @@ public enum Command {
      */
     public static Command chooseCommand(Scanner scanner) throws InvalidCommandException {
 
-        System.out.println(SPLIT.message + SPLIT.symbol
-                + "\n" + MERGE.message + MERGE.symbol);
-
+        for(Command command: Command.values()) {
+            System.out.println(command.message + command.symbol + "\n");
+        }
         String symbol = scanner.nextLine();
         for (Command command : values()) {
             if (symbol.equalsIgnoreCase(command.symbol)) {

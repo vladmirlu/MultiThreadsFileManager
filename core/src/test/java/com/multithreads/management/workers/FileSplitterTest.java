@@ -58,7 +58,8 @@ public class FileSplitterTest {
 
         filePath = bundle.getString("originalFile");
         file = new File(filePath);
-        if(!file.exists()) file.createNewFile();
+        if(file.exists()) Files.delete(Paths.get(file.getPath()));
+
         RandomAccessFile raFile = new RandomAccessFile(file, "rw");
         raFile.writeChars("This is the test of splitting");
 
@@ -85,9 +86,9 @@ public class FileSplitterTest {
     }
 
     @Test
-    public void splitIntegrationTest() throws IOException{
+    public void splitTest() throws IOException{
         partFileSize = "5";
-        FileService fileService = new FileService(Logger.getRootLogger(), resourcesPath);
+        FileService fileService = new FileService(resourcesPath);
         FileSplitter splitter = new FileSplitter();
         List<Future<File>> futures = splitter.split(filePath, partFileSize, fileService);
         assertEquals(12, futures.size());

@@ -20,14 +20,7 @@ public class FileSplitter {
     /**
      * Root logger.
      */
-    private final Logger logger;
-
-    /**
-     * create new file splitter object and initialise logger
-     */
-    public FileSplitter() {
-        this.logger = Logger.getLogger(FileSplitter.class);
-    }
+    private final Logger logger = Logger.getLogger(FileSplitter.class);
 
     /**
      * Splits file into parts.
@@ -59,6 +52,7 @@ public class FileSplitter {
             futures.add(f);
             logger.debug("Creating Future<File> to write data '" + file.getName() + "' into split part file '" + partFile.getName() + "'");
         }
+        fileService.turnOnStatisticPrint();
         return futures;
     }
 }
