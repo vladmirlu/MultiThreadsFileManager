@@ -5,11 +5,9 @@ import com.multithreads.management.exception.InvalidCommandException;
 import com.multithreads.management.workers.FileService;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.Future;
+
 
 /**
  * Tool for interaction with user.
@@ -42,6 +40,7 @@ public class Communicator {
         try {
             Command command = Command.chooseCommand(scanner);
             System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
+            logger.info("Quantity of Future<File> tasks = " + command.apply(fileService, scanner).size());
             openConsole();
         } catch (InvalidCommandException i) {
             i.printStackTrace();

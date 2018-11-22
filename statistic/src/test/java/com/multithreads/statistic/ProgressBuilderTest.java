@@ -1,20 +1,31 @@
-/*
 package com.multithreads.statistic;
 
-
-import com.multithreads.statistic.StatisticService;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ProgressBuilderTest {
 
+    private ReportsAdjuster reportsAdjuster;
+
+    private ProgressBuilder progressBuilder;
+
+    @Before
+    public void setUp(){
+        reportsAdjuster = new ReportsAdjuster();
+        progressBuilder = new ProgressBuilder(reportsAdjuster);
+    }
+
+    @Test
+    public void callTest(){
+        String progress = progressBuilder.call();
+        assertEquals("Total progress: 0%, Total spent time: 0ns " ,progress);
+    }
+
+    @Test
+    public void calculateProgressTest(){
+        int progress = progressBuilder.calculateProgress(50,100);
+        assertEquals(50, progress);
+    }
 }
-*/

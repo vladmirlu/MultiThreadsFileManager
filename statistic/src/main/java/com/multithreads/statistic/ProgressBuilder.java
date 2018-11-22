@@ -68,6 +68,7 @@ public class ProgressBuilder implements Callable {
      */
     @Override
     public String toString() {
+
         return new StringBuilder().append("ProgressBuilder { ").append(",general progress= ")
                 .append(totalProgress).append('\'').append(", spent time= ")
                 .append(reportsAdjuster.getGeneralReport().getSpentNanoTime()).append("ns. ").append('\'')
