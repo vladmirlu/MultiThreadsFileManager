@@ -41,8 +41,7 @@ public class Communicator {
         Scanner scanner = new Scanner(System.in);
         try {
             Command command = Command.chooseCommand(scanner);
-           // System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
-            List<Future<File>> futures = command.apply(fileService, scanner);
+            System.out.println("Quantity of tasks = " + command.apply(fileService, scanner).size());
             openConsole();
         } catch (InvalidCommandException i) {
             i.printStackTrace();
