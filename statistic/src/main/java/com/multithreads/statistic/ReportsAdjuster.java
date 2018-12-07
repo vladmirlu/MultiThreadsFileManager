@@ -44,21 +44,21 @@ public class ReportsAdjuster {
      */
     boolean adjustThreadReports(long copiedBytes, String threadName, long spentNanoTime) {
 
-        if (generalReport.getCopiedBytes() + copiedBytes >= generalReport.getTotalBytes()) {
+        if (generalReport.getCompleted() + copiedBytes >= generalReport.getTotal()) {
             return false;
         }
-        generalReport.setCopiedBytes(generalReport.getCopiedBytes() + copiedBytes);
+        generalReport.setCompleted(generalReport.getCompleted() + copiedBytes);
         generalReport.setSpentNanoTime(generalReport.getSpentNanoTime() + spentNanoTime);
         logger.debug("Update data of general task report: " + generalReport.toString());
 
         TaskReport threadReport;
         if (threadReports.containsKey(threadName)) {
             threadReport = threadReports.get(threadName);
-            threadReport.setCopiedBytes(threadReport.getCopiedBytes() + copiedBytes);
+            threadReport.setCompleted(threadReport.getCompleted() + copiedBytes);
             threadReport.setSpentNanoTime(threadReport.getSpentNanoTime() + spentNanoTime);
             logger.debug("Update data of one thread report" + threadReport.toString() + " for thread: '" + threadName + "'");
         } else {
-            threadReport = new TaskReport(copiedBytes, generalReport.getTotalBytes(), spentNanoTime);
+            threadReport = new TaskReport(copiedBytes, generalReport.getTotal(), spentNanoTime);
             threadReports.put(threadName, threadReport);
             logger.debug("Put new TaskReport: " + threadReport.toString() + " for thread '" + threadName + "'");
         }
@@ -74,8 +74,8 @@ public class ReportsAdjuster {
         logger.debug("Set total size of " + totalBytes + "bytes to transfer and reset other fields");
         threadReports.clear();
         generalReport.setSpentNanoTime(0);
-        generalReport.setCopiedBytes(0);
-        generalReport.setTotalBytes(totalBytes);
+        generalReport.setCompleted(0);
+        generalReport.setTotal(totalBytes);
     }
 
     /**

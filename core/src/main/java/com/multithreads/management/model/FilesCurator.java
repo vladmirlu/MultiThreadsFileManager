@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Files data transfer object to transfer file data into task
  */
-public class FilesDTO {
+public class FilesCurator {
 
     /**
      * File from which to transfer the bytes.
@@ -41,7 +41,7 @@ public class FilesDTO {
      * @param fileWrite   transfer destination file
      * @param writeOffset pointer offset in the transfer destination file
      */
-    public FilesDTO(File fileRead, File fileWrite, long readOffset, long writeOffset, long writeLength) {
+    public FilesCurator(File fileRead, File fileWrite, long readOffset, long writeOffset, long writeLength) {
 
         this.fileRead = fileRead;
         this.fileWrite = fileWrite;
@@ -72,7 +72,7 @@ public class FilesDTO {
 
     @Override
     public String toString(){
-        return new StringBuilder().append("FilesDTO { File fileRead(file to read data from): ").append(fileRead.getAbsolutePath())
+        return new StringBuilder().append("FilesCurator { File fileRead(file to read data from): ").append(fileRead.getAbsolutePath())
                 .append("; File fileWrite(file to write data into): ").append(fileWrite.getAbsolutePath())
                 .append("; long readOffset = ").append(readOffset).append("; long writeOffset = ").append(writeOffset)
                 .append("; long writeLength = ").append(writeLength).append(" }").toString();

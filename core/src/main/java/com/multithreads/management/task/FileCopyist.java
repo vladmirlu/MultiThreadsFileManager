@@ -1,7 +1,7 @@
 package com.multithreads.management.task;
 
 import com.multithreads.management.commands.Command;
-import com.multithreads.management.model.FilesDTO;
+import com.multithreads.management.model.FilesCurator;
 import com.multithreads.management.workers.FileProvider;
 import com.multithreads.statistic.StatisticService;
 
@@ -22,7 +22,7 @@ public class FileCopyist implements Runnable {
     /**
      * Files data transfer object to supply file data into current task
      */
-    private final FilesDTO filesDTO;
+    private final FilesCurator filesCurator;
 
     /**
      * Object for logging the process
@@ -32,12 +32,12 @@ public class FileCopyist implements Runnable {
     /**
      * Build new task
      *
-     * @param filesDTO         files data transfer object
+     * @param filesCurator         files data transfer object
      * @param statisticService object to make statistic process
      */
-    public FileCopyist(FilesDTO filesDTO, StatisticService statisticService) {
+    public FileCopyist(FilesCurator filesCurator, StatisticService statisticService) {
 
-        this.filesDTO = filesDTO;
+        this.filesCurator = filesCurator;
         this.statisticService = statisticService;
     }
 
@@ -49,14 +49,14 @@ public class FileCopyist implements Runnable {
 
         logger.info("FileCopyist started " + this);
         try {
-            logger.debug("Input data the FileDTO: " + filesDTO.toString());
-            RandomAccessFile fileRead = new RandomAccessFile(filesDTO.getFileRead(), "r");
-            RandomAccessFile fileWrite = new RandomAccessFile(filesDTO.getFileWrite(), "rw");
-            fileRead.seek(filesDTO.getReadOffset());
-            fileWrite.seek(filesDTO.getWriteOffset());
+            logger.debug("Input data the FileDTO: " + filesCurator.toString());
+            RandomAccessFile fileRead = new RandomAccessFile(filesCurator.getFileRead(), "r");
+            RandomAccessFile fileWrite = new RandomAccessFile(filesCurator.getFileWrite(), "rw");
+            fileRead.seek(filesCurator.getReadOffset());
+            fileWrite.seek(filesCurator.getWriteOffset());
             logger.debug("File to read offset = " + fileRead.getFilePointer() + "File to write offset = " + fileWrite.getFilePointer());
 
-            long writeLength = filesDTO.getWriteLength();
+            long writeLength = filesCurator.getWriteLength();
             long bufferSize = FileProvider.BUFFER_SIZE;
             long completed = 0;
             long spentTime;
@@ -73,7 +73,7 @@ public class FileCopyist implements Runnable {
                     writeLength -= bufferSize;
                     completed += bufferSize;
                 }
-                logger.info("Statistic started: copiedBytes= " + completed + "spentNanoTime=" + spentTime);
+                logger.info("Statistic started: copiedBytes = " + completed + "; spentNanoTime = " + spentTime);
                 statisticService.trackTaskProgress(completed, Thread.currentThread().getName(), spentTime);
             }
             fileRead.close();
@@ -116,12 +116,12 @@ public class FileCopyist implements Runnable {
     @Override
     public String toString() {
         return new StringBuilder().append(" FileCopyist -> work data: { ")
-                .append('\'').append("File fileRead: ").append(filesDTO.getFileRead())
-                .append(", long readOffset = ").append(filesDTO.getReadOffset())
-                .append(", File fileWrite ").append(filesDTO.getFileWrite())
-                .append(", long writeOffset:").append(filesDTO.getWriteOffset())
-                .append(", writeLength = ").append(filesDTO.getWriteLength())
-                .append(", command = '").append(filesDTO.getWriteOffset() == 0 ? Command.SPLIT.name() : Command.MERGE.name()).append('\'')
+                .append('\'').append("File fileRead: ").append(filesCurator.getFileRead())
+                .append(", long readOffset = ").append(filesCurator.getReadOffset())
+                .append(", File fileWrite ").append(filesCurator.getFileWrite())
+                .append(", long writeOffset:").append(filesCurator.getWriteOffset())
+                .append(", writeLength = ").append(filesCurator.getWriteLength())
+                .append(", command = '").append(filesCurator.getWriteOffset() == 0 ? Command.SPLIT.name() : Command.MERGE.name()).append('\'')
                 .append('}').toString();
     }
 }

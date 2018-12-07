@@ -40,12 +40,12 @@ public class ProgressBuilder implements Callable {
     public String call() {
 
         logger.info("Start statistic reports building: " + this);
-        totalProgress = calculateProgress(reportsAdjuster.getGeneralReport().getCopiedBytes(), reportsAdjuster.getGeneralReport().getTotalBytes());
+        totalProgress = calculateProgress(reportsAdjuster.getGeneralReport().getCompleted(), reportsAdjuster.getGeneralReport().getTotal());
 
         StringBuilder progressBuilder = new StringBuilder();
         progressBuilder.append("Total progress: ").append(totalProgress).append("%, ");
         reportsAdjuster.getThreadReports().forEach((threadName, taskReport) -> progressBuilder.append(threadName).append(": ")
-                .append(calculateProgress(taskReport.getCopiedBytes(), taskReport.getTotalBytes())).append("%, ")
+                .append(calculateProgress(taskReport.getCompleted(), taskReport.getTotal())).append("%, ")
                 .append("Spent time: ").append(taskReport.getSpentNanoTime()).append("ns. "));
         progressBuilder.append("Total spent time: ").append(reportsAdjuster.getGeneralReport().getSpentNanoTime()).append("ns ");
         logger.info("End statistic reports building:" + this);
@@ -70,7 +70,7 @@ public class ProgressBuilder implements Callable {
     public String toString() {
 
         return new StringBuilder().append("ProgressBuilder { ").append(",general progress= ")
-                .append(totalProgress).append('\'').append(", spent time= ")
+                .append(totalProgress).append('\'').append(", spent time = ")
                 .append(reportsAdjuster.getGeneralReport().getSpentNanoTime()).append("ns. ").append('\'')
                 .append('}').toString();
     }

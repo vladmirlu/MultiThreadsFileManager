@@ -1,6 +1,6 @@
 package com.multithreads.management.workers;
 
-import com.multithreads.management.model.FilesDTO;
+import com.multithreads.management.model.FilesCurator;
 import com.multithreads.management.task.FileCopyist;
 import com.multithreads.statistic.StatisticService;
 
@@ -59,9 +59,9 @@ public class FileService {
      * @return new created task Future<File>
      */
     public Future<File> createTaskFuture(File fileToRead, long writeLength, long toReadOffset, long toWriteOffset, File fileToWrite) {
-        FilesDTO filesDTO = new FilesDTO(fileToRead, fileToWrite, toReadOffset, toWriteOffset, writeLength);
-        logger.debug("Submit new task" + filesDTO.toString() + " in work thread pool");
-        return fileWorkersPool.submit(new FileCopyist(filesDTO, statisticService), filesDTO.getFileWrite());
+        FilesCurator filesCurator = new FilesCurator(fileToRead, fileToWrite, toReadOffset, toWriteOffset, writeLength);
+        logger.debug("Submit new task" + filesCurator.toString() + " in work thread pool");
+        return fileWorkersPool.submit(new FileCopyist(filesCurator, statisticService), filesCurator.getFileWrite());
     }
 
     /**

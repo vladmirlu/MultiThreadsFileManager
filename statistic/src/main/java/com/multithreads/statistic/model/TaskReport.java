@@ -1,19 +1,19 @@
 package com.multithreads.statistic.model;
 
 /**
- * Report about copiedBytes and totalBytes tasks and spent time.
+ * Report about completed and total tasks and spent time.
  */
 public class TaskReport {
 
     /**
      * Quantity of copied bytes
      */
-    private volatile long copiedBytes;
+    private volatile long completed;
 
     /**
      * Total bytes quantity
      */
-    private volatile long totalBytes;
+    private volatile long total;
 
     /**
      * Time to do buffer tasks (in nanoseconds).
@@ -21,15 +21,15 @@ public class TaskReport {
     private volatile long spentNanoTime;
 
     /**
-     * Initializes copiedBytes, totalBytes and spentNanoTime for task.
+     * Initializes completed, total and spentNanoTime for task.
      *
-     * @param copiedBytes   copied bytes quantity
-     * @param totalBytes    total bytes quantity
+     * @param completed   copied bytes quantity
+     * @param total    total bytes quantity
      * @param spentNanoTime spent time in nanoseconds
      */
-    public TaskReport(long copiedBytes, long totalBytes, long spentNanoTime) {
-        this.copiedBytes = copiedBytes;
-        this.totalBytes = totalBytes;
+    public TaskReport(long completed, long total, long spentNanoTime) {
+        this.completed = completed;
+        this.total = total;
         this.spentNanoTime = spentNanoTime;
     }
 
@@ -37,20 +37,20 @@ public class TaskReport {
         return spentNanoTime;
     }
 
-    public long getCopiedBytes() {
-        return copiedBytes;
+    public long getCompleted() {
+        return completed;
     }
 
-    public long getTotalBytes() {
-        return totalBytes;
+    public long getTotal() {
+        return total;
     }
 
-    public void setCopiedBytes(long copiedBytes) {
-        this.copiedBytes = copiedBytes;
+    public void setCompleted(long completed) {
+        this.completed = completed;
     }
 
-    public void setTotalBytes(long totalBytes) {
-        this.totalBytes = totalBytes;
+    public void setTotal(long total) {
+        this.total = total;
     }
 
     public void setSpentNanoTime(long spentNanoTime) {
@@ -60,8 +60,8 @@ public class TaskReport {
     @Override
     public String toString(){
 
-        return  new StringBuilder().append("TaskReport {" ).append("long copiedBytes = ").append(copiedBytes)
-                .append(", long totalBytes").append(totalBytes).append(", long spentNanoTime").append(spentNanoTime)
+        return  new StringBuilder().append("TaskReport {" ).append("long completed = ").append(completed)
+                .append(", long total = ").append(total).append(", long spentNanoTime = ").append(spentNanoTime)
                 .append("; }").toString();
     }
 }
